@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace PracticaJWTcore.Models;
 
@@ -19,5 +20,6 @@ public partial class Appointment
 
     public virtual Vehicle? Vehicle { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Service> Services { get; set; } = new List<Service>();
 }
