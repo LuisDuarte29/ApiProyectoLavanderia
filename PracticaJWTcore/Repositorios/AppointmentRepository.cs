@@ -37,14 +37,26 @@ namespace PracticaJWTcore.Repositorios
             return true;
         }
 
-        public async Task<IEnumerable<Appointment>> GetAppointment(long id)
+        public async Task<Appointment> GetAppointment(long id)
         {
-            return (IEnumerable<Appointment>)await _context.Appointments.FirstAsync(x => x.AppointmentId == id);
+            return await _context.Appointments.FirstAsync(x => x.AppointmentId == id);
         }
 
         public async Task<IEnumerable<Appointment>> GetAppointmentAll()
         {
             return await _context.Appointments.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Appointment>> UpdateAppointment(Appointment appointment)
+        {
+            Appointment appointment1 = await _context.Appointments.FirstAsync(x => x.AppointmentId == appointment.AppointmentId);
+
+            appointment1.AppointmentDate = appointment.AppointmentDate;
+            appointment1.Employee = appointment.Employee;
+            appointment1.Vehicle = appointment.Vehicle;
+            appointment1.Comments = appointment.Comments;
+            await _context.SaveChangesAsync();
+            return await GetAppointmentAll();
         }
     }
 }

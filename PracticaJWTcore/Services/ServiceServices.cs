@@ -1,38 +1,40 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using PracticaJWTcore.Models;
+using PracticaJWTcore.Repositorios;
+using System.Reflection.Metadata.Ecma335;
 
 namespace PracticaJWTcore.Services
 {
-    public class ServiceServices
+    public class ServiceServices : IServiceServices
     { 
-        private readonly PracticaJWTcoreContext _context;
-        public ServiceServices(PracticaJWTcoreContext context) {
+        private readonly IServicesRepository _context;
+        public ServiceServices(IServicesRepository context) {
 
             _context = context;
         }
 
-      
-
         public async Task<Service> GetService(long id)
         {
-            return await _context.Services.FirstAsync(x => x.ServiceId == id);
+            return await _context.GetService(id);
         }
         
         public async Task<Service> CreateService(Service services)
         {
-            Service servicesEntity = new Service
-            {
-                ServiceId = 0,
-                ServiceName = services.ServiceName,
-                Description = services.Description,
-                Price = services.Price
-            };
-            EntityEntry<Service> entityEntry=await _context.Services.AddAsync(servicesEntity);
-            await _context.SaveChangesAsync();
-            return await GetService(entityEntry.Entity.ServiceId);
+            return await _context.CreateService(services);
+        }
+        public async Task<bool> DeleteService(long id)
+        {
+            return await _context.DeleteService(id);
+        }
+        public async Task<List<Service>> GetServiceAll()
+        {
+            return await _context.GetServiceAll();
         }
 
-
+        public async Task<List<Service>> UpdateServices(Service services)
+        {
+            return await _context.UpdateServices(services);
+        }
     }
 }

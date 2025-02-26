@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PracticaJWTcore.Entities;
+using PracticaJWTcore.Models;
 using PracticaJWTcore.Services;
 
 namespace PracticaJWTcore.Controllers
@@ -12,18 +13,18 @@ namespace PracticaJWTcore.Controllers
     [Authorize]
     public class CustomerController : Controller
     {
-      
-        private readonly CustomerServices _customerServices;
-        public CustomerController(CustomerServices customerServices)
+
+        private readonly ICustomerServices _customerServices;
+        public CustomerController(ICustomerServices customerServices)
         {
             _customerServices = customerServices;
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCustomer(long id) 
+        public async Task<IActionResult> GetCustomer(long id)
         {
             CustomerEntity customerEntity = await _customerServices.GetCustomer(id);
-           return Ok(customerEntity.ToDto());
+            return Ok(customerEntity.ToDto());
         }
         [HttpGet]
         public async Task<IActionResult> GetCustomerAll()
@@ -42,6 +43,12 @@ namespace PracticaJWTcore.Controllers
         {
             CustomerEntity customerEntity = await _customerServices.CreateCustomer(customer);
             return new CreatedResult($"http://localhost:7184/api/customer/{customerEntity.Id}", null);
+        }
+        [HttpPut]
+        public async Task<IActionResult> UpdateCustomer([FromBody] Customer customer)
+        {
+            await _customerServices.UpdateCustomer(customer);
+            return new OkObjectResult(customer);
         }
     }
 }

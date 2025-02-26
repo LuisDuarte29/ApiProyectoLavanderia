@@ -15,13 +15,12 @@ namespace PracticaJWTcore.Services
             return _appointmentRepository.CreateAppointment(appointment);
 
         }
-
         public Task<bool> DeleteApointment(long id)
         {
             return _appointmentRepository.DeleteApointment(id);
         }
 
-        public Task<IEnumerable<Appointment>> GetAppointment(long id)
+        public Task<Appointment> GetAppointment(long id)
         {
             return _appointmentRepository.GetAppointment(id);
         }
@@ -31,6 +30,12 @@ namespace PracticaJWTcore.Services
             return await _appointmentRepository.GetAppointmentAll();
         }
 
- 
+        public async Task<IEnumerable<Appointment>> UpdateAppointment(Appointment appointment)
+        {
+            return await _appointmentRepository.UpdateAppointment(appointment);
+            
+        }
+
+  
     }
 }
