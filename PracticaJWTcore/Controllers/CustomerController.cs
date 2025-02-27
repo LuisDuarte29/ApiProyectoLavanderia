@@ -10,7 +10,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Admin,User")]
     public class CustomerController : Controller
     {
 

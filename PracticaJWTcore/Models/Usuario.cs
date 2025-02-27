@@ -10,4 +10,6 @@ public partial class Usuario
     public byte[]? Clave { get; set; }
 
     public int IdUsuario { get; set; }
+
+    public ICollection<UsuariosRoles> UsuariosRoles { get; set; }
 }
