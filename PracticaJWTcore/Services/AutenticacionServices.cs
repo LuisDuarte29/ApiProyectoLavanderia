@@ -11,7 +11,7 @@ namespace PracticaJWTcore.Services
             _context = context;
         }
 
-        public async Task<string> Login(Usuario usuario)
+        public async Task<string> Login(UsuarioLogin usuario)
         {
             return await _context.Login(usuario);
         }

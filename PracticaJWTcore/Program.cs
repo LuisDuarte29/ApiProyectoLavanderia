@@ -67,10 +67,13 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IAutenticacionRepository, AutenticacionRespository>();
 
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 builder.Services.AddScoped<IServiceServices, ServiceServices>();
 builder.Services.AddScoped<IAppointmentServices, AppoitmentServices>();
+builder.Services.AddScoped<IAutenticacionServices, AutenticacionServices>();
+
 
 
 builder.Services.AddDbContext<PracticaJWTcoreContext>(sqlBuilder =>

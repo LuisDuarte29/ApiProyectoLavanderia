@@ -6,8 +6,8 @@ namespace PracticaJWTcore.Repositorios
 {
     public interface IAutenticacionRepository
     {
-        Task<string> GenerateToken(Usuario usuario, List<string> roles, int result);
-        Task<string> Login(Usuario usuario);
+        Task<string> GenerateToken(UsuarioLogin usuario, List<string> roles, int result);
+        Task<string> Login(UsuarioLogin usuario);
        
     }
 }

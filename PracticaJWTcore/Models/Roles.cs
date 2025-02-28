@@ -2,11 +2,14 @@
 {
     public class Roles
     {
-
-        public long RoleId { get; set; }
+        public int RoleId { get; set; }
         public string RoleName { get; set; }
-        public ICollection<UsuariosRoles> UsuariosRoles { get; set; }
-        public ICollection<RolesPermisos> RolesPermisos { get; set; }
 
+        // Relación con UsuariosRoles
+        public ICollection<UsuariosRoles> UsuariosRoles { get; set; } = new List<UsuariosRoles>();
+
+        // Relación con RolesPermisos
+        public ICollection<RolesPermisos> RolesPermisos { get; set; } = new List<RolesPermisos>();
     }
+
 }

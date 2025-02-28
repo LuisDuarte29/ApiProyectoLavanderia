@@ -28,6 +28,21 @@ public partial class PracticaJWTcoreContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.Entity<UsuariosRoles>()
+      .HasKey(ur => ur.UsuariosRolesId);
+
+        modelBuilder.Entity<UsuariosRoles>()
+            .HasOne(ur => ur.Usuario)
+            .WithMany(u => u.UsuariosRoles)  // 👈 Esto permite hacer Include()
+            .HasForeignKey(ur => ur.UsuarioId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UsuariosRoles>()
+            .HasOne(ur => ur.Rol)
+            .WithMany(r => r.UsuariosRoles)
+            .HasForeignKey(ur => ur.RolId)
+            .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<Appointment>(entity =>
         {
             entity.Property(e => e.AppointmentId).HasColumnName("AppointmentID");
@@ -96,17 +111,18 @@ public partial class PracticaJWTcoreContext : DbContext
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("Usuario");
+            entity.HasKey(u => u.IdUsuario);  // Define the primary key
+
+            entity.ToTable("Usuario");
 
             entity.Property(e => e.Clave).HasColumnName("clave");
             entity.Property(e => e.Correo)
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("correo");
-            entity.Property(e => e.IdUsuario).ValueGeneratedOnAdd();
+            entity.Property(e => e.IdUsuario).ValueGeneratedOnAdd(); // Auto-generate on add
         });
+
 
         modelBuilder.Entity<Vehicle>(entity =>
         {

@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
-namespace PracticaJWTcore.Models;
-
-public partial class Usuario
+namespace PracticaJWTcore.Models
 {
-    public string? Correo { get; set; }
-
-    public byte[]? Clave { get; set; }
-
+public class Usuario
+    {
     public int IdUsuario { get; set; }
+    public string? Correo { get; set; }
+    public string? Clave { get; set; }
 
-    public ICollection<UsuariosRoles> UsuariosRoles { get; set; }
+    // Relación con UsuariosRoles
+    public ICollection<UsuariosRoles> UsuariosRoles { get; set; } = new List<UsuariosRoles>();
+    }
 }

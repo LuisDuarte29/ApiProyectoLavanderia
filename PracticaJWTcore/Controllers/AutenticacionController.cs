@@ -1,5 +1,5 @@
 ﻿
-using ApiSwagger.Modelos;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
@@ -22,7 +22,7 @@ namespace PracticaJWTcore.Controllers
             _autenticacionRepository = autenticacionRepository;
         }
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] Usuario request)
+        public async Task<IActionResult> Login([FromBody] UsuarioLogin request)
         {
             var response= await _autenticacionRepository.Login(request);
             return response!=null ? StatusCode(StatusCodes.Status200OK, new { token = response }) : StatusCode(StatusCodes.Status401Unauthorized, new { token = "" });

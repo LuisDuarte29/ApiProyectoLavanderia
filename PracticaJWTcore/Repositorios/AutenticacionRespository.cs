@@ -1,4 +1,4 @@
-﻿using ApiSwagger.Modelos;
+﻿
 using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -22,7 +22,7 @@ namespace PracticaJWTcore.Repositorios
             this.secretKey = configuration.GetSection("JWT").GetSection("Key").ToString();
             this.conection = configuration.GetConnectionString("DefaultConnection");
         }
-        public async Task<string> GenerateToken(Usuario usuario, List<string> roles, int result)
+        public async Task<string> GenerateToken(UsuarioLogin usuario, List<string> roles, int result)
         {
           
             byte[] token;
@@ -35,7 +35,7 @@ namespace PracticaJWTcore.Repositorios
                 {
                     claims.AddClaim(new Claim(ClaimTypes.Role, rol));
                 }
-                claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.Correo));
+                claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.correo));
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -56,11 +56,11 @@ namespace PracticaJWTcore.Repositorios
 
    
 
-        public async Task<string> Login(Usuario usuario)
+        public async Task<string> Login(UsuarioLogin usuario)
         {
 
             var usuarioRoles = await _context.Usuarios.Include(u => u.UsuariosRoles).ThenInclude(ur => ur.Rol)
-                .ThenInclude(o => o.RolesPermisos).ThenInclude(p => p.Permisos).FirstOrDefaultAsync(u => u.Correo == usuario.Correo);
+                .ThenInclude(o => o.RolesPermisos).ThenInclude(p => p.Permisos).FirstOrDefaultAsync(u => u.Correo == usuario.correo);
 
             int result = 0;
             using (var conecction = new SqlConnection())
@@ -68,8 +68,8 @@ namespace PracticaJWTcore.Repositorios
                 using (var command = new SqlCommand("proc_ComparePass", conecction))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@Correo", usuario.Correo);
-                    command.Parameters.AddWithValue("@Clave", usuario.Clave);
+                    command.Parameters.AddWithValue("@Correo", usuario.correo);
+                    command.Parameters.AddWithValue("@Clave", usuario.clave);
                     SqlParameter ouputParameter = command.Parameters.Add("@Compare", SqlDbType.Int);
                     ouputParameter.Direction = ParameterDirection.Output;
                     await conecction.OpenAsync();
