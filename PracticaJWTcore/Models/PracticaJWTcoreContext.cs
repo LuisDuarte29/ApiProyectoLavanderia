@@ -123,7 +123,45 @@ public partial class PracticaJWTcoreContext : DbContext
             entity.Property(e => e.IdUsuario).ValueGeneratedOnAdd(); // Auto-generate on add
         });
 
+        // 📌 Configuración de RolesPermisos
+        modelBuilder.Entity<RolesPermisos>()
+            .HasKey(rp => rp.RolesPermisosId);
 
+        modelBuilder.Entity<RolesPermisos>()
+            .HasOne(rp => rp.Roles)
+            .WithMany(r => r.RolesPermisos)
+            .HasForeignKey(rp => rp.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<RolesPermisos>()
+            .HasOne(rp => rp.Permisos)
+            .WithMany(p => p.RolesPermisos)
+            .HasForeignKey(rp => rp.PermisoId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
+        modelBuilder.Entity<Roles>(entity =>
+        {
+            entity.HasKey(r => r.RoleId);
+            entity.ToTable("Roles");
+
+            entity.Property(r => r.RoleName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Nombre");
+        });
+
+        // 📌 Configuración de Permisos
+        modelBuilder.Entity<Permisos>(entity =>
+        {
+            entity.HasKey(p => p.PermisoId);
+            entity.ToTable("Permisos");
+
+            entity.Property(p => p.PermisoNombre)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Nombre");
+        });
         modelBuilder.Entity<Vehicle>(entity =>
         {
             entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
