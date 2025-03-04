@@ -19,9 +19,15 @@ public partial class PracticaJWTcoreContext : DbContext
 
     public virtual DbSet<Service> Services { get; set; }
 
-    public virtual DbSet<Usuario> Usuarios { get; set; }
+    public virtual DbSet<Usuarios> Usuarios { get; set; }
 
     public virtual DbSet<Vehicle> Vehicles { get; set; }
+    public virtual DbSet<Roles> Roles { get; set; }
+
+    public virtual DbSet<UsuariosRoles> UsuariosRoles { get; set; }
+
+    public virtual DbSet<Permisos> Permisos { get; set; }
+    public virtual DbSet<RolesPermisos> RolesPermisos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
@@ -109,23 +115,24 @@ public partial class PracticaJWTcoreContext : DbContext
                 .IsUnicode(false);
         });
 
-        modelBuilder.Entity<Usuario>(entity =>
+        modelBuilder.Entity<Usuarios>(entity =>
         {
             entity.HasKey(u => u.IdUsuario);  // Define the primary key
 
-            entity.ToTable("Usuario");
+            entity.ToTable("Usuarios");
 
-            entity.Property(e => e.Clave).HasColumnName("clave");
-            entity.Property(e => e.Correo)
+            entity.Property(e => e.clave).HasColumnName("clave");
+            entity.Property(e => e.correo)
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("correo");
             entity.Property(e => e.IdUsuario).ValueGeneratedOnAdd(); // Auto-generate on add
         });
+  
 
         // 📌 Configuración de RolesPermisos
         modelBuilder.Entity<RolesPermisos>()
-            .HasKey(rp => rp.RolesPermisosId);
+            .HasKey(rp => rp.RolePermisoId);
 
         modelBuilder.Entity<RolesPermisos>()
             .HasOne(rp => rp.Roles)
@@ -148,7 +155,7 @@ public partial class PracticaJWTcoreContext : DbContext
             entity.Property(r => r.RoleName)
                 .HasMaxLength(50)
                 .IsUnicode(false)
-                .HasColumnName("Nombre");
+                .HasColumnName("RoleName");
         });
 
         // 📌 Configuración de Permisos
@@ -160,7 +167,7 @@ public partial class PracticaJWTcoreContext : DbContext
             entity.Property(p => p.PermisoNombre)
                 .HasMaxLength(50)
                 .IsUnicode(false)
-                .HasColumnName("Nombre");
+                .HasColumnName("PermisoNombre");
         });
         modelBuilder.Entity<Vehicle>(entity =>
         {

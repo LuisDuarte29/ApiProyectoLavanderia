@@ -4,11 +4,11 @@ using System.Text.Json.Serialization;
 
 namespace PracticaJWTcore.Models
 {
-public class Usuario
+public class Usuarios
     {
     public int IdUsuario { get; set; }
-    public string? Correo { get; set; }
-    public string? Clave { get; set; }
+    public string? correo { get; set; }
+    public byte[] clave { get; set; }
 
     // Relación con UsuariosRoles
     public ICollection<UsuariosRoles> UsuariosRoles { get; set; } = new List<UsuariosRoles>();

@@ -54,16 +54,16 @@ namespace PracticaJWTcore.Repositorios
             }
         }
 
-   
 
+        
         public async Task<string> Login(UsuarioLogin usuario)
         {
 
             var usuarioRoles = await _context.Usuarios.Include(u => u.UsuariosRoles).ThenInclude(ur => ur.Rol)
-                .ThenInclude(o => o.RolesPermisos).ThenInclude(p => p.Permisos).FirstOrDefaultAsync(u => u.Correo == usuario.correo);
+                .ThenInclude(o => o.RolesPermisos).ThenInclude(p => p.Permisos).FirstOrDefaultAsync(u => u.correo == usuario.correo);
 
             int result = 0;
-            using (var conecction = new SqlConnection())
+            using (var conecction = new SqlConnection(conection))
             {
                 using (var command = new SqlCommand("proc_ComparePass", conecction))
                 {

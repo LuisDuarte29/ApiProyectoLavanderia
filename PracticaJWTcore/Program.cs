@@ -75,6 +75,8 @@ builder.Services.AddScoped<IAppointmentServices, AppoitmentServices>();
 builder.Services.AddScoped<IAutenticacionServices, AutenticacionServices>();
 
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine("Cadena de conexión: " + connectionString);
 
 builder.Services.AddDbContext<PracticaJWTcoreContext>(sqlBuilder =>
 {
