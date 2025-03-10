@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticaJWTcore", "Practica
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticaJWTCoreTest", "PracticaJWTCoreTest\PracticaJWTCoreTest.csproj", "{0C9BD9C9-94B5-410E-8C86-28A96B3F52C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorApp1", "BlazorApp1\BlazorApp1.csproj", "{8B583123-CF3D-4F64-AA17-FC4726C8CE02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0C9BD9C9-94B5-410E-8C86-28A96B3F52C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C9BD9C9-94B5-410E-8C86-28A96B3F52C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C9BD9C9-94B5-410E-8C86-28A96B3F52C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B583123-CF3D-4F64-AA17-FC4726C8CE02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B583123-CF3D-4F64-AA17-FC4726C8CE02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B583123-CF3D-4F64-AA17-FC4726C8CE02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B583123-CF3D-4F64-AA17-FC4726C8CE02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

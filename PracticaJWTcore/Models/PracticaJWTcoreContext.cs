@@ -28,13 +28,23 @@ public partial class PracticaJWTcoreContext : DbContext
 
     public virtual DbSet<Permisos> Permisos { get; set; }
     public virtual DbSet<RolesPermisos> RolesPermisos { get; set; }
+    public virtual DbSet<AppointmentService> AppointmentServices { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AppointmentService>(entity =>
+        {
+            entity.HasKey(e => e.IdAppointmentServices);
 
+            entity.Property(e => e.AppointmentId).HasColumnName("AppointmentID");
+            entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
+            entity.Property(e => e.Estado).HasColumnName("Estado");
+        });
+
+        OnModelCreatingPartial(modelBuilder);
         modelBuilder.Entity<UsuariosRoles>()
       .HasKey(ur => ur.UsuariosRolesId);
 
@@ -67,24 +77,7 @@ public partial class PracticaJWTcoreContext : DbContext
                 .HasForeignKey(d => d.VehicleId)
                 .HasConstraintName("FK_Appointments_Vehicles");
 
-            entity.HasMany(d => d.Services).WithMany(p => p.Appointments)
-                .UsingEntity<Dictionary<string, object>>(
-                    "AppointmentService",
-                    r => r.HasOne<Service>().WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_AppointmentServices_Services"),
-                    l => l.HasOne<Appointment>().WithMany()
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_AppointmentServices_Appointments"),
-                    j =>
-                    {
-                        j.HasKey("AppointmentId", "ServiceId");
-                        j.ToTable("AppointmentServices");
-                        j.IndexerProperty<long>("AppointmentId").HasColumnName("AppointmentID");
-                        j.IndexerProperty<long>("ServiceId").HasColumnName("ServiceID");
-                    });
+         
         });
 
         modelBuilder.Entity<Customer>(entity =>

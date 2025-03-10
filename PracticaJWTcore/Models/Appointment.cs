@@ -21,5 +21,5 @@ public partial class Appointment
     public virtual Vehicle? Vehicle { get; set; }
 
     [JsonIgnore]
-    public virtual ICollection<Service> Services { get; set; } = new List<Service>();
+    public virtual ICollection<AppointmentService> AppointmentServices { get; set; } = new List<AppointmentService>();
 }
