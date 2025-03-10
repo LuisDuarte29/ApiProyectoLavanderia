@@ -1,0 +1,24 @@
+﻿@page "/testapi"
+@inject HttpClient Http
+
+<h3>Prueba de Conexión con API</h3>
+
+<button @onclick="GetTest">Realizar petición</button>
+<p>@resultado</p>
+
+@code {
+    private string resultado = "Esperando respuesta...";
+
+    private async Task GetTest()
+    {
+        try
+        {
+            resultado = await Http.GetStringAsync("api/test");
+        }
+        catch (Exception ex)
+        {
+            resultado = $"Error: {ex.Message}";
+        }
+    }
+}
+

@@ -12,14 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-        });
-
-
+    options.AddPolicy("PermitirTodo",
+        policy => policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
 });
+
 builder.Configuration.AddJsonFile("appsettings.json");
 var secretkey = builder.Configuration.GetSection("JWT").GetSection("Key").ToString();
 var keyBytes = Encoding.ASCII.GetBytes(secretkey);
@@ -103,9 +101,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-
-app.UseHttpsRedirection();
-
+app.UseRouting();
+app.UseCors("PermitirTodo"); // ?? Debe estar ANTES de UseAuthorization()
+app.UseAuthentication(); // ?? Si usas JWT, agrega esto antes de Authorization
 app.UseAuthorization();
 
 app.MapControllers();

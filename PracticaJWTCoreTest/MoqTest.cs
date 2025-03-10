@@ -1,3 +1,7 @@
+
+
+
+
 // UnitTests/AppointmentRepositoryUnitTests.cs
 using Moq;
 using Xunit;
@@ -6,6 +10,7 @@ using PracticaJWTcore.Repositorios;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace PracticaJWTcore.Tests.MoqTest
 {
@@ -62,16 +67,18 @@ namespace PracticaJWTcore.Tests.MoqTest
         {
             // Arrange
             var appointment = new Appointment { AppointmentId = 1 };
-       var deleted=  _mockSet.Setup(m => m.FindAsync(1)).ReturnsAsync(appointment);
+
+            _mockSet.Setup(m => m.FindAsync(appointment.AppointmentId))
+                    .ReturnsAsync(appointment);
 
             // Act
-            var result = await _repository.DeleteApointment(1);
+            var result = await _repository.DeleteApointment(appointment.AppointmentId);
 
             // Assert
             _mockSet.Verify(m => m.Remove(It.IsAny<Appointment>()), Times.Once());
             _mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
             Assert.True(result);
-            Assert.Null(deleted);
         }
+
     }
 }
