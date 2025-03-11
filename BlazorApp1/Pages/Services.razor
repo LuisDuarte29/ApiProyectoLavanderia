@@ -1,0 +1,30 @@
+﻿@page "/services"
+@inject NotificationService notificationService
+<h3>Services</h3>
+
+<h1>Hello Radzen!</h1>
+
+<RadzenStack Gap="0" class="rz-py-8 rz-px-12">
+
+    <RadzenAlert @bind-Visible="visible" Close=@OnClose>
+        Toggle alert visibility and handle the <code>Close</code> event.
+    </RadzenAlert>
+    <RadzenButton Text="@ToggleButtonText" Click="@OnToggle" />
+</RadzenStack>
+
+@code{
+    bool visible = true;
+
+    string ToggleButtonText => visible ? "Hide alert" : "Show alert";
+
+    void OnToggle()
+    {
+        visible = !visible;
+    }
+
+    void OnClose()
+    {
+        notificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Closed", Detail = "Info" });
+    }
+}
+
