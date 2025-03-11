@@ -1,30 +1,99 @@
 ﻿@page "/services"
 @inject NotificationService notificationService
+@inject HttpClient client
+@inject NavigationManager navigationManager
 <h3>Services</h3>
 
 <h1>Hello Radzen!</h1>
+@if (response == null || response.Any())
+{
+    <p>Loading...</p>
+}
+else
+{
+    <RadzenDataGrid TItem="Service" Data="@response" AllowFiltering="true" FilterMode="FilterMode.Advanced" EmptyText="No existe datos"
+    GridLines="DataGridGridLines.Horizontal" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive">
+        <Columns>
+            <RadzenDataGridColumn TItem="Service" Property="ServiceId" Title="ServiceId"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Service" Property="ServiceName" Title="ServiceName"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Service" Property="Description" Title="Description"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Service" Property="Price" Title="Price" FormatString="{0:C}"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Service" Title="Delete">
+                <Template Context="servicio">
+                    <RadzenButton Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium"
+                    Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteServicio(servicio.ServiceId))"
+                    @onclick:stopPropagation="true" />
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Service" Title="Edit">
+                <Template Context="servicio">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Flat" Size="ButtonSize.Medium"
+                    Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => UpdateService(servicio.ServiceId))"
+                    @onclick:stopPropagation="true" />
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
 
-<RadzenStack Gap="0" class="rz-py-8 rz-px-12">
+}
 
-    <RadzenAlert @bind-Visible="visible" Close=@OnClose>
-        Toggle alert visibility and handle the <code>Close</code> event.
-    </RadzenAlert>
-    <RadzenButton Text="@ToggleButtonText" Click="@OnToggle" />
-</RadzenStack>
+    @code{
 
-@code{
-    bool visible = true;
-
-    string ToggleButtonText => visible ? "Hide alert" : "Show alert";
-
-    void OnToggle()
+    public List<Service> response { get; set; }
+    public string messagge { get; set; }
+    protected async override Task OnInitializedAsync()
     {
-        visible = !visible;
+        await GetServicio();
+    }
+    public async Task GetServicio()
+    {
+        try
+        {
+            var response = await client.GetFromJsonAsync<List<Service>>("api/service") ?? new List<Service>();
+        }
+        catch(Exception ex)
+        {
+            messagge = "Ocurrio un error al intentar recibir el service";
+        }
+
+    }
+    public async Task DeleteServicio(long id)
+    {
+        try
+        {
+            var result = await client.DeleteAsync("api/servicio/{id}");
+            response.RemoveAll(s => s.ServiceId == id);
+        }
+        catch
+        {
+            messagge = "Ocurrio un error al intentar eliminar el service";
+        }
     }
 
-    void OnClose()
+    public async Task UpdateService(long id)
     {
-        notificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Info, Summary = "Closed", Detail = "Info" });
+        try
+        {
+            navigationManager.NavigateTo("/services/{id}");
+        }
+        catch
+        {
+            messagge = "Ocurrio un error al intentar redirigir el service";
+        }
     }
+
+    public  class Service
+    {
+        public long ServiceId { get; set; }
+
+        public string? ServiceName { get; set; }
+
+        public string? Description { get; set; }
+
+        public decimal? Price { get; set; }
+    }
+
+
+   
 }
 

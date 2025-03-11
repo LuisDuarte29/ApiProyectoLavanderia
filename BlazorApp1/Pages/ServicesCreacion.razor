@@ -1,0 +1,115 @@
+﻿@page "/servicesCreacion/{idServicio?}"
+@inject NotificationService notificationService
+@inject HttpClient client
+@inject NavigationManager navigationManager
+<h3>Services</h3>
+
+<h1>Agregar Servicio!</h1>
+<RadzenRow Gap="2rem">
+    <RadzenColumn SizeMD="4">
+        <RadzenCard class="rz-m-1"  >
+            <RadzenFieldset Text="Datos del Servicio">
+
+                <RadzenStack Gap="0.5rem">
+                    <RadzenLabel Text="Service Name"></RadzenLabel>
+                    <RadzenTextBox Placeholder="Service Name" @bind-Value="@servicios.ServiceName"></RadzenTextBox>
+
+                    <RadzenLabel Text="Descripción"></RadzenLabel>
+                    <RadzenTextBox Placeholder="Descripción" @bind-Value="@servicios.Description"></RadzenTextBox>
+
+                    <RadzenLabel Text="Precio"></RadzenLabel>
+                    <RadzenNumeric ShowUpDown="false" Placeholder="Precio" Format="#,##0.##" @bind-Value="@servicios.Price"></RadzenNumeric>
+                </RadzenStack>
+
+            </RadzenFieldset>
+        </RadzenCard>
+
+        <RadzenStack JustifyContent="JustifyContent.Center" class="mt-2">
+            <RadzenButton Icon="save" Text="Guardar"
+                          ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium"
+                          Shade="Shade.Dark" class="rz-my-1 rz-ms-1"
+                          Click="PostServicio" @onclick:stopPropagation="true" />
+        </RadzenStack>
+    </RadzenColumn>
+</RadzenRow>
+
+
+
+@code {
+    [Parameter]
+    public long idServicio { get; set; }
+    public List<Service> response { get; set; }
+    public string messagge { get; set; }
+    Service servicios = new Service();
+    string NuevoServicio;
+    protected async override Task OnInitializedAsync()
+    {
+        if (idServicio != 0 )
+        {
+            var response = await client.GetFromJsonAsync<Service>("api/services/{idServicio}");
+            var service = new Service();
+
+            service.ServiceName = response.ServiceName;
+            service.Description = response.Description;
+            service.Price = response.Price;
+
+
+        }
+    
+    }
+
+    public async Task PostServicio()
+    {
+        try
+        {
+            var json = ODataJsonSerializer.Serialize(servicios);
+            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsJsonAsync("api/service", stringContent);
+            if (response.IsSuccessStatusCode)
+            {
+                NuevoServicio = await response.Content.ReadAsStringAsync();
+                navigationManager.NavigateTo("/services");
+            }
+        }
+        catch (Exception ex)
+        {
+            messagge = "Ocurrio un error al intentar recibir el service";
+        }
+
+    }
+    public async Task UpdateService(Service Services)
+    {
+        try
+        {
+
+            var json = ODataJsonSerializer.Serialize(servicios);
+            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PutAsJsonAsync("api/service/{idServicio}", stringContent);
+            if (response.IsSuccessStatusCode)
+            {
+                NuevoServicio = await response.Content.ReadAsStringAsync();
+                navigationManager.NavigateTo("/services");
+            }
+        }
+        catch (Exception ex)
+        {
+            messagge = "Ocurrio un error al intentar recibir el service";
+        }
+
+    }
+
+    public class Service
+    {
+        public long ServiceId { get; set; }
+
+        public string? ServiceName { get; set; }
+
+        public string? Description { get; set; }
+
+        public decimal? Price { get; set; }
+    }
+
+
+
+}
+
