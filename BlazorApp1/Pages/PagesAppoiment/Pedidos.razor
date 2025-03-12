@@ -1,0 +1,122 @@
+﻿@page "/pedidos"
+@inject HttpClient client
+
+<h3>Appoiment</h3>
+
+
+@if (response.Count == 0)
+{
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" class="rz-m-12" Gap="2rem">
+
+        <RadzenProgressBarCircular ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Espere..</Template>
+        </RadzenProgressBarCircular>
+
+    </RadzenStack>
+}
+else
+{
+    <RadzenStack Gap="1rem">
+        <RadzenDataGrid @ref="grid" Data="@response" TItem="AppoitmentDetailsDTO" EmptyText="No existen datos" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" ExpandMode="DataGridExpandMode.Single">
+            <Columns>
+                <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.AppointmentId)" Title="AppointmentId" Width="80px" />
+                <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.AppointmentDate)" Title="AppointmentDate" Width="200px" FormatString="{0:d}" />
+                <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.Vehicle)" Title="Vehicle" Width="120px" />
+                <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.Employee)" Title="Employee" Width="200px" />
+                <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.Comments)" Title="Comments" Width="120px" />
+                <RadzenStack>
+                    <RadzenDataGridColumn Title="Details" TItem="AppoitmentDetailsDTO">
+                        <Template Context="Appoitment">
+                            <RadzenButton Text="View" Click="@(args => grid.ExpandRow(Appoitment))" Disabled="@isnulo" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </RadzenStack>
+
+            </Columns>
+            <Template Context="response">
+                <RadzenCard Variant="Variant.Outlined" class="rz-mb-3">
+                    <RadzenPanel Expandable="true" Text="Servcios">
+                        <RadzenDataGrid Data="@response.Services" TItem="ServiceDTO" AllowPaging="true" PageSize="3">
+                            <Columns>
+                                <RadzenDataGridColumn Property="@nameof(ServiceDTO.ServiceId)" Title="ServiceId" Width="100px" />
+                                <RadzenDataGridColumn Property="@nameof(ServiceDTO.ServiceName)" Title="ServiceName" Width="120px" />
+                                <RadzenDataGridColumn Property="@nameof(ServiceDTO.Price)" Title="Price" Width="150px" />
+                                <RadzenDataGridColumn Property="@nameof(ServiceDTO.Estado)" Title="Estado" Width="150px" />
+                            </Columns>
+                        </RadzenDataGrid>
+                    </RadzenPanel>
+                </RadzenCard>
+            </Template>
+        </RadzenDataGrid>
+    </RadzenStack>
+}
+
+
+@code {
+    public List<AppoitmentDetailsDTO> response { get; set; } = new();
+    public string messagge { get; set; }
+    DataGridExpandMode expandMode = DataGridExpandMode.Single;
+    bool? allRowsExpanded;
+
+    async Task ToggleRowsExpand(bool? value)
+    {
+        allRowsExpanded = value;
+
+        if (value == true)
+        {
+            await grid.ExpandRows(grid.PagedView);
+        }
+        else if (value == false)
+        {
+            await grid.CollapseRows(grid.PagedView);
+        }
+    }
+
+    //El RadzenDataGrid es un componente de cuadrícula de datos que admite paginación, filtrado, clasificación y expansión de filas. donde si quiero referenciar 
+    //el componente en el código, debo usar la directiva @ref.
+    RadzenDataGrid<AppoitmentDetailsDTO> grid;
+    public bool isnulo { get; set; } = true;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetServicio();
+        isnulo = await ServicioNulo(response);
+    }
+    public async Task GetServicio()
+    {
+        try
+        {
+            response = await client.GetFromJsonAsync<List<AppoitmentDetailsDTO>>("api/pedidos") ?? new List<AppoitmentDetailsDTO>();
+        }
+        catch (Exception ex)
+        {
+            messagge = "Ocurrio un error al intentar recibir el pedido";
+        }
+        StateHasChanged();
+
+    }
+    void RowRender(RowRenderEventArgs<AppoitmentDetailsDTO> args)
+    {
+        args.Expandable = args.Data.Services.Any();
+    }
+    public async Task<bool> ServicioNulo(List<AppoitmentDetailsDTO> args)
+    {
+        // Si la lista está vacía, entonces no hay servicios => Devuelve true (es nulo)
+        if (args == null || !args.Any())
+        {
+            return true;
+        }
+
+        // Si al menos un elemento tiene servicios, entonces no es nulo => Devuelve false
+        return !args.Any(c => c.Services.Count==0);
+    }
+
+
+    // void OnOrdersDataGridRender(DataGridRenderEventArgs<ServiceDTO> args)
+    // {
+    //     if (args.FirstRender)
+    //     {
+    //         InvokeAsync(() => args.Grid.ExpandRow(args.Grid.View.Where(c => c.OrderDetails.Any()).FirstOrDefault()));
+    //     }
+    // }
+}

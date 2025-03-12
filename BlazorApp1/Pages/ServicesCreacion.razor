@@ -1,4 +1,5 @@
 ﻿@page "/servicesCreacion/{idServicio?}"
+@using System.Text.Json
 @inject NotificationService notificationService
 @inject HttpClient client
 @inject NavigationManager navigationManager
@@ -7,9 +8,15 @@
 <h1>Agregar Servicio!</h1>
 <RadzenRow Gap="2rem">
     <RadzenColumn SizeMD="4">
-        <RadzenCard class="rz-m-1"  >
-            <RadzenFieldset Text="Datos del Servicio">
+        <RadzenCard class="rz-m-1" >
 
+            <RadzenFieldset Text="Datos del Servicio">
+                @if (idServicio != null)
+                {
+                    <RadzenStack Gap="0.5rem">
+                        <RadzenLabel Text="@($"Codigo: {idServicio.ToString()}")"></RadzenLabel>
+                    </RadzenStack>
+                }
                 <RadzenStack Gap="0.5rem">
                     <RadzenLabel Text="Service Name"></RadzenLabel>
                     <RadzenTextBox Placeholder="Service Name" @bind-Value="@servicios.ServiceName"></RadzenTextBox>
@@ -28,7 +35,7 @@
             <RadzenButton Icon="save" Text="Guardar"
             ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium"
             Shade="Shade.Dark" class="rz-my-1 rz-ms-1"
-                          Click="@(async()=> {if (idServicioLong==null) await PostServicio() ; else await UpdateService(servicios); })" @onclick:stopPropagation="true" />
+            Click="@(async()=> {if (idServicioLong==null) await PostServicio() ; else await UpdateService(servicios); })" @onclick:stopPropagation="true" />
         </RadzenStack>
     </RadzenColumn>
 </RadzenRow>
@@ -52,7 +59,7 @@
 
             idServicioLong =Convert.ToInt64(idServicio);
             var response = await client.GetFromJsonAsync<Service>($"api/service/{idServicioLong}");
-          
+
 
             servicios.ServiceName = response.ServiceName;
             servicios.Description = response.Description;
@@ -60,16 +67,15 @@
 
             StateHasChanged();
         }
-    
+
     }
 
     public async Task PostServicio()
     {
         try
         {
-            var json = ODataJsonSerializer.Serialize(servicios);
-            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            var response = await client.PostAsJsonAsync("api/service", stringContent);
+
+            var response = await client.PostAsJsonAsync("api/service", servicios);
             if (response.IsSuccessStatusCode)
             {
                 NuevoServicio = await response.Content.ReadAsStringAsync();
@@ -82,14 +88,13 @@
         }
 
     }
-    public async Task UpdateService(Service Services)
+    public async Task UpdateService(Service ServicesPut)
     {
         try
         {
+            ServicesPut.ServiceId = idServicioLong;
 
-            var json = ODataJsonSerializer.Serialize(servicios);
-            var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-            var response = await client.PutAsJsonAsync("api/service/{idServicio}", stringContent);
+            var response = await client.PutAsJsonAsync("api/service/", ServicesPut);
             if (response.IsSuccessStatusCode)
             {
                 NuevoServicio = await response.Content.ReadAsStringAsync();
@@ -106,7 +111,7 @@
 
     public class Service
     {
-        public long ServiceId { get; set; }
+        public long? ServiceId { get; set; }
 
         public string? ServiceName { get; set; }
 

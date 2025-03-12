@@ -7,7 +7,13 @@
 <h1>Hello Radzen!</h1>
 @if (response == null || !response.Any())
 {
-    <p>Loading...</p>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap" class="rz-m-12" Gap="2rem">
+
+        <RadzenProgressBarCircular ShowValue="true" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+            <Template>Espere..</Template>
+        </RadzenProgressBarCircular>
+
+    </RadzenStack>
 }
 else
 {
@@ -66,13 +72,22 @@ else
         try
         {
             var result = await client.DeleteAsync($"api/service/{id}");
-            response.RemoveAll(s => s.ServiceId == id);
-            StateHasChanged();
+
+            if (result.IsSuccessStatusCode) // Verifica que la eliminación fue exitosa
+            {
+                response.RemoveAll(s => s.ServiceId == id);
+                StateHasChanged();
+            }
+            else
+            {
+                messagge = "No se pudo eliminar el servicio. Intente nuevamente.";
+            }
         }
-        catch
+        catch (Exception ex)
         {
-            messagge = "Ocurrio un error al intentar eliminar el service";
+            messagge = $"Ocurrió un error al intentar eliminar el servicio: {ex.Message}";
         }
+
     }
 
     public async Task UpdateService(long idServicio)
