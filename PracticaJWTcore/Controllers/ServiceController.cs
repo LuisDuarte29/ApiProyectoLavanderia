@@ -8,7 +8,6 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "User")]
     public class ServiceController : Controller
     {
         private readonly IServiceServices _serviceServices;
@@ -16,10 +15,10 @@ namespace PracticaJWTcore.Controllers
         {
             _serviceServices = servicesServices;
         }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetService(long id)
+        [HttpGet("{idServicioLong}")]
+        public async Task<IActionResult> GetService(long idServicioLong)
         {
-            var service = await _serviceServices.GetService(id);
+            var service = await _serviceServices.GetService(idServicioLong);
             return new OkObjectResult(service);
         }
         [HttpPost]

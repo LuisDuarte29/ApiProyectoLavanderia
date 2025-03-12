@@ -26,9 +26,9 @@
 
         <RadzenStack JustifyContent="JustifyContent.Center" class="mt-2">
             <RadzenButton Icon="save" Text="Guardar"
-                          ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium"
-                          Shade="Shade.Dark" class="rz-my-1 rz-ms-1"
-                          Click="PostServicio" @onclick:stopPropagation="true" />
+            ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium"
+            Shade="Shade.Dark" class="rz-my-1 rz-ms-1"
+                          Click="@(async()=> {if (idServicioLong==null) await PostServicio() ; else await UpdateService(servicios); })" @onclick:stopPropagation="true" />
         </RadzenStack>
     </RadzenColumn>
 </RadzenRow>
@@ -37,23 +37,28 @@
 
 @code {
     [Parameter]
-    public long idServicio { get; set; }
+    public string? idServicio { get; set; }
+    public long? idServicioLong { get; set; }
     public List<Service> response { get; set; }
     public string messagge { get; set; }
     Service servicios = new Service();
     string NuevoServicio;
     protected async override Task OnInitializedAsync()
     {
-        if (idServicio != 0 )
+
+        if (idServicio != null)
+
         {
-            var response = await client.GetFromJsonAsync<Service>("api/services/{idServicio}");
-            var service = new Service();
 
-            service.ServiceName = response.ServiceName;
-            service.Description = response.Description;
-            service.Price = response.Price;
+            idServicioLong =Convert.ToInt64(idServicio);
+            var response = await client.GetFromJsonAsync<Service>($"api/service/{idServicioLong}");
+          
 
+            servicios.ServiceName = response.ServiceName;
+            servicios.Description = response.Description;
+            servicios.Price = response.Price;
 
+            StateHasChanged();
         }
     
     }
@@ -88,6 +93,7 @@
             if (response.IsSuccessStatusCode)
             {
                 NuevoServicio = await response.Content.ReadAsStringAsync();
+                StateHasChanged();
                 navigationManager.NavigateTo("/services");
             }
         }
