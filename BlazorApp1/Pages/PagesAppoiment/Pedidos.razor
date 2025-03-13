@@ -26,9 +26,9 @@ else
                 <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.Comments)" Title="Comments" Width="120px" />
                 <RadzenStack>
                     <RadzenDataGridColumn Title="Details" TItem="AppoitmentDetailsDTO">
-                        <Template Context="Appoitment">
-                            <RadzenButton Text="View" Click="@(args => grid.ExpandRow(Appoitment))" Disabled="@isnulo" />
-                        </Template>
+                        <Template Context="AppoitmentDetails">
+                            <RadzenButton Text="View" Click="@(args => grid.ExpandRow(AppoitmentDetails))" Disabled="@(AppoitmentDetails.Services==null)" />
+                        </Template> 
                     </RadzenDataGridColumn>
                 </RadzenStack>
 
@@ -80,7 +80,7 @@ else
     protected async override Task OnInitializedAsync()
     {
         await GetServicio();
-        isnulo = await ServicioNulo(response);
+
     }
     public async Task GetServicio()
     {
