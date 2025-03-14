@@ -17,7 +17,7 @@
 else
 {
     <RadzenStack Gap="1rem">
-        <RadzenDataGrid @ref="grid" Data="@response" TItem="AppoitmentDetailsDTO" EmptyText="No existen datos" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" ExpandMode="DataGridExpandMode.Single">
+        <RadzenDataGrid RowRender="RowRender" @ref="grid" Data="@response" TItem="AppoitmentDetailsDTO" EmptyText="No existen datos" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" ExpandMode="DataGridExpandMode.Single">
             <Columns>
                 <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.AppointmentId)" Title="AppointmentId" Width="80px" />
                 <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.AppointmentDate)" Title="AppointmentDate" Width="200px" FormatString="{0:d}" />
@@ -27,7 +27,10 @@ else
                 <RadzenStack>
                     <RadzenDataGridColumn Title="Details" TItem="AppoitmentDetailsDTO">
                         <Template Context="AppoitmentDetails">
-                            <RadzenButton Text="View" Click="@(args => grid.ExpandRow(AppoitmentDetails))" Disabled="@(AppoitmentDetails.Services==null)" />
+                            <RadzenButton Text="View" Click="@(args => grid.ExpandRow(AppoitmentDetails))"
+                            Disabled="@(AppoitmentDetails.Services == null || !AppoitmentDetails.Services.Any())"
+                            Visible="@(AppoitmentDetails.Services != null && AppoitmentDetails.Services.Any())" />
+
                         </Template> 
                     </RadzenDataGridColumn>
                 </RadzenStack>
@@ -95,9 +98,11 @@ else
         StateHasChanged();
 
     }
-    void RowRender(RowRenderEventArgs<AppoitmentDetailsDTO> args)
+    //Se define la función RowRender como la encargada de determinar si una fila es expandible.
+    //como es este caso queremos no mostar para que se expanda cuando no hay servicio porque no es necesario
+    public void RowRender(RowRenderEventArgs<AppoitmentDetailsDTO> args)
     {
-        args.Expandable = args.Data.Services.Any();
+        args.Expandable = args.Data.Services != null && args.Data.Services.Any();
     }
     public async Task<bool> ServicioNulo(List<AppoitmentDetailsDTO> args)
     {
