@@ -19,48 +19,24 @@ builder.Services.AddCors(options =>
 });
 
 builder.Configuration.AddJsonFile("appsettings.json");
-var secretkey = builder.Configuration.GetSection("JWT").GetSection("Key").ToString();
+var secretkey = builder.Configuration.GetSection("JWT:Key").Value;
 var keyBytes = Encoding.ASCII.GetBytes(secretkey);
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateIssuerSigningKey = true,
-        //El IssuerSigningKey se usa para validar la firma del token
-        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
-        ValidateIssuer = false,
-        ValidateAudience = false
-    };
-});
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mi API", Version = "v1" });
-
-    // Definir autenticación con JWT en Swagger
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "Ingrese el token JWT en el formato: Bearer {token}",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer"
-    });
-
-    // Aplicar autenticación a todas las solicitudes protegidas
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-            },
-            new string[] {}
-        }
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+            ValidateIssuerSigningKey = true,
+        };
     });
-});
+
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
@@ -101,8 +77,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-app.UseRouting();
+
 app.UseCors("PermitirTodo"); // ?? Debe estar ANTES de UseAuthorization()
+app.UseRouting();
 app.UseAuthentication(); // ?? Si usas JWT, agrega esto antes de Authorization
 app.UseAuthorization();
 

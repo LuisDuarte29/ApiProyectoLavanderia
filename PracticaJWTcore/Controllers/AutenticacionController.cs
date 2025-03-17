@@ -13,7 +13,7 @@ using System.Text;
 namespace PracticaJWTcore.Controllers
 {
     [ApiController]
-    [Route("Autenticacion")]
+    [Route("api/[controller]")]
     public class AutenticacionController : Controller
     {
         public readonly IAutenticacionRepository _autenticacionRepository;
@@ -22,9 +22,9 @@ namespace PracticaJWTcore.Controllers
             _autenticacionRepository = autenticacionRepository;
         }
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] UsuarioLogin request)
+        public async Task<IActionResult> Login([FromBody] UsuarioLogin loginModel)
         {
-            var response= await _autenticacionRepository.Login(request);
+            var response= await _autenticacionRepository.Login(loginModel);
             return response!=null ? StatusCode(StatusCodes.Status200OK, new { token = response }) : StatusCode(StatusCodes.Status401Unauthorized, new { token = "" });
       
         

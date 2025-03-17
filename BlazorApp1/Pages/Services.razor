@@ -2,6 +2,7 @@
 @inject NotificationService notificationService
 @inject HttpClient client
 @inject NavigationManager navigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 <h3>Services</h3>
 
 <h1>Hello Radzen!</h1>
@@ -28,15 +29,15 @@ else
                 <RadzenDataGridColumn Width="100px" TItem="Service" Title="Delete">
                     <Template Context="servicio">
                         <RadzenButton  Icon="delete" ButtonStyle="ButtonStyle.Danger" Variant="Variant.Flat" Size="ButtonSize.Medium"
-                                      Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteServicio(servicio.ServiceId))"
-                                      @onclick:stopPropagation="true" />
+                        Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => DeleteServicio(servicio.ServiceId))"
+                        @onclick:stopPropagation="true" />
                     </Template>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn  Width="100px" TItem="Service" Title="Edit">
                     <Template Context="servicio">
                         <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Secondary" Variant="Variant.Flat" Size="ButtonSize.Medium"
-                                      Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => UpdateService(servicio.ServiceId))"
-                                      @onclick:stopPropagation="true" />
+                        Shade="Shade.Lighter" class="rz-my-1 rz-ms-1" Click="@(args => UpdateService(servicio.ServiceId))"
+                        @onclick:stopPropagation="true" />
                     </Template>
                 </RadzenDataGridColumn>
             </RadzenStack>
@@ -58,7 +59,13 @@ else
     {
         try
         {
-             response = await client.GetFromJsonAsync<List<Service>>("api/service") ?? new List<Service>();
+            var token = await localStorage.GetItemAsync<string>("token");
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer",token);
+                response = await client.GetFromJsonAsync<List<Service>>("api/service") ?? new List<Service>();
+            }
+         
         }
         catch(Exception ex)
         {
