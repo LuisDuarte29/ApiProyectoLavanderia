@@ -19,24 +19,48 @@ builder.Services.AddCors(options =>
 });
 
 builder.Configuration.AddJsonFile("appsettings.json");
-var secretkey = builder.Configuration.GetSection("JWT:Key").Value;
+var secretkey = builder.Configuration.GetSection("JWT").GetSection("Key").ToString();
 var keyBytes = Encoding.ASCII.GetBytes(secretkey);
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
-            ValidateIssuerSigningKey = true,
-        };
+        ValidateIssuerSigningKey = true,
+        //El IssuerSigningKey se usa para validar la firma del token
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+});
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mi API", Version = "v1" });
+
+    // Definir autenticación con JWT en Swagger
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Ingrese el token JWT en el formato: Bearer {token}",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer"
     });
 
-builder.Services.AddSwaggerGen();
+    // Aplicar autenticación a todas las solicitudes protegidas
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            new string[] {}
+        }
+    });
+});
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
@@ -77,9 +101,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
 }
-
-app.UseCors("PermitirTodo"); // ?? Debe estar ANTES de UseAuthorization()
 app.UseRouting();
+app.UseCors("PermitirTodo"); // ?? Debe estar ANTES de UseAuthorization()
 app.UseAuthentication(); // ?? Si usas JWT, agrega esto antes de Authorization
 app.UseAuthorization();
 

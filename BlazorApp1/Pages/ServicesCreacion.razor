@@ -3,6 +3,7 @@
 @inject NotificationService notificationService
 @inject HttpClient client
 @inject NavigationManager navigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 <h3>Services</h3>
 
 <h1>Agregar Servicio!</h1>
@@ -50,6 +51,7 @@
     public string messagge { get; set; }
     Service servicios = new Service();
     string NuevoServicio;
+    public string token { get; set; }
     protected async override Task OnInitializedAsync()
     {
 
@@ -58,14 +60,20 @@
         {
 
             idServicioLong =Convert.ToInt64(idServicio);
-            var response = await client.GetFromJsonAsync<Service>($"api/service/{idServicioLong}");
+            token = await localStorage.GetItemAsync<string>("token");
+            if (!string.IsNullOrEmpty(token))
+            {
+
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var response = await client.GetFromJsonAsync<Service>($"api/service/{idServicioLong}");
 
 
-            servicios.ServiceName = response.ServiceName;
-            servicios.Description = response.Description;
-            servicios.Price = response.Price;
+                servicios.ServiceName = response.ServiceName;
+                servicios.Description = response.Description;
+                servicios.Price = response.Price;
 
-            StateHasChanged();
+                StateHasChanged();
+            }
         }
 
     }
@@ -74,12 +82,17 @@
     {
         try
         {
-
-            var response = await client.PostAsJsonAsync("api/service", servicios);
-            if (response.IsSuccessStatusCode)
+            token = await localStorage.GetItemAsync<string>("token");
+            if (!string.IsNullOrEmpty(token))
             {
-                NuevoServicio = await response.Content.ReadAsStringAsync();
-                navigationManager.NavigateTo("/services");
+                servicios.ServiceId = 0;
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var response = await client.PostAsJsonAsync<Service>("api/service", servicios);
+                if (response.IsSuccessStatusCode)
+                {
+                    NuevoServicio = await response.Content.ReadAsStringAsync();
+                    navigationManager.NavigateTo("/services");
+                }
             }
         }
         catch (Exception ex)
@@ -93,14 +106,19 @@
         try
         {
             ServicesPut.ServiceId = idServicioLong;
-
-            var response = await client.PutAsJsonAsync("api/service/", ServicesPut);
-            if (response.IsSuccessStatusCode)
+            token = await localStorage.GetItemAsync<string>("token");
+            if (!string.IsNullOrEmpty(token))
             {
-                NuevoServicio = await response.Content.ReadAsStringAsync();
-                StateHasChanged();
-                navigationManager.NavigateTo("/services");
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                var response = await client.PutAsJsonAsync("api/service/", ServicesPut);
+                if (response.IsSuccessStatusCode)
+                {
+                    NuevoServicio = await response.Content.ReadAsStringAsync();
+                    StateHasChanged();
+                    navigationManager.NavigateTo("/services");
+                }
             }
+          
         }
         catch (Exception ex)
         {

@@ -1,7 +1,7 @@
 ﻿@page "/pedidos"
 @inject HttpClient client
 
-<h3>Appoiment</h3>
+<h3>Pedidos</h3>
 
 
 @if (response.Count == 0)
@@ -24,16 +24,7 @@ else
                 <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.Vehicle)" Title="Vehicle" Width="120px" />
                 <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.Employee)" Title="Employee" Width="200px" />
                 <RadzenDataGridColumn Property="@nameof(AppoitmentDetailsDTO.Comments)" Title="Comments" Width="120px" />
-                <RadzenStack>
-                    <RadzenDataGridColumn Title="Details" TItem="AppoitmentDetailsDTO">
-                        <Template Context="AppoitmentDetails">
-                            <RadzenButton Text="View" Click="@(args => grid.ExpandRow(AppoitmentDetails))"
-                            Disabled="@(AppoitmentDetails.Services == null || !AppoitmentDetails.Services.Any())"
-                            Visible="@(AppoitmentDetails.Services != null && AppoitmentDetails.Services.Any())" />
-
-                        </Template> 
-                    </RadzenDataGridColumn>
-                </RadzenStack>
+       
 
             </Columns>
             <Template Context="response">

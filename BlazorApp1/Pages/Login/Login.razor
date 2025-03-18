@@ -1,35 +1,53 @@
 ﻿@page "/"
+@layout LayoutVacio
 @inject NavigationManager Navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject HttpClient Http
 @inject NotificationService notificationService
 
-<h3>Login</h3>
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4 rounded" style="max-width: 400px; width: 100%;">
+        <div class="card-body">
+            <h3 class="text-center mb-4">Iniciar Sesión</h3>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+            <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
 
-    <div class="form-group">
-        <label for="email">Correo Electrónico:</label>
-        <InputText id="email" class="form-control" @bind-Value="loginModel.correo" />
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <InputText id="email" class="form-control" @bind-Value="loginModel.correo" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <InputText id="password" class="form-control" @bind-Value="loginModel.clave" type="password" />
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Iniciar sesión</button>
+                </div>
+            </EditForm>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="password">Contraseña:</label>
-        <InputText id="password" class="form-control" @bind-Value="loginModel.clave" type="password" />
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-    </div>
-</EditForm>
+</div>
+
 
 @code {
+     
     private UsuarioLogin loginModel = new UsuarioLogin();
 
     private async Task HandleLogin()
     {
         if (!string.IsNullOrEmpty(loginModel.correo) && !string.IsNullOrEmpty(loginModel.clave))
         {
+            await localStorage.RemoveItemAsync("token");
             // Aquí puedes realizar una petición al backend para verificar las credenciales
             var response = await Http.PostAsJsonAsync("api/Autenticacion", loginModel);
 

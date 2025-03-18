@@ -22,6 +22,8 @@ namespace PracticaJWTcore.Controllers
             var service = await _serviceServices.GetService(idServicioLong);
             return new OkObjectResult(service);
         }
+
+        //En el post si o si debo enviarle igual el id del servicio = 0, no aceptan null
         [HttpPost]
         public async Task<IActionResult> CreateServices([FromBody] Service ServicesBody)
         {
