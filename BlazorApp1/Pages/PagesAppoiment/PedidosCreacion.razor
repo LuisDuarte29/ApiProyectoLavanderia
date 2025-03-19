@@ -1,0 +1,35 @@
+﻿@page "/pedidoscreacion"
+<h3>PedidosCreacion</h3>
+
+<select @bind-value="SelectedId" @bind-value:event="onchange">
+    <option value="">--Seleccione--</option>
+    @foreach (var item in Opciones)
+    {
+        <option value="@item.Id">@item.Nombre</option>
+    }
+</select>
+
+<p>Seleccionaste: @SelectedNombre</p>
+
+@code {
+    private string SelectedId = "";
+    private string SelectedNombre = "";
+
+    private List<Opcion> Opciones = new()
+    {
+        new Opcion { Id = "1", Nombre = "Opción A" },
+        new Opcion { Id = "2", Nombre = "Opción B" },
+        new Opcion { Id = "3", Nombre = "Opción C" }
+    };
+
+    private void SelectedIdChanged()
+    {
+        SelectedNombre = Opciones.FirstOrDefault(o => o.Id == SelectedId)?.Nombre ?? "";
+    }
+
+    private class Opcion
+    {
+        public string Id { get; set; }
+        public string Nombre { get; set; }
+    }
+}
