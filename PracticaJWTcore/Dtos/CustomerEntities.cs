@@ -3,7 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PracticaJWTcore.Entities
 {
-    [Table("Customers")]
+  
+
     public class CustomerEntity
     {
         public long Id { get; set; }

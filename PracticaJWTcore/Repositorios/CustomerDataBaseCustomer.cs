@@ -13,7 +13,7 @@ namespace PracticaJWTcore.Repositorios
         {
 
         }
-        public DbSet<CustomerEntity> Customers { get; set; }
+        public DbSet<CustomerEntity> Customer { get; set; }
 
        
 

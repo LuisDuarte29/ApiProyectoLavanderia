@@ -17,7 +17,7 @@ namespace PracticaJWTcore.Repositorios
 
         public async Task<CustomerEntity> GetCustomer(long id)
         {
-            return await _context.Customers.FirstAsync(x => x.Id == id);
+            return await _context.Customer.FirstAsync(x => x.Id == id);
         }
         public async Task<CustomerEntity> CreateCustomer(CreateCustomerDto customersCreate)
         {
@@ -31,26 +31,26 @@ namespace PracticaJWTcore.Repositorios
 
             };
             //El EntryEntity nos permite hacer un seguimiento de los cambios en la entidad
-            EntityEntry<CustomerEntity> response = await _context.Customers.AddAsync(customerEntity);
+            EntityEntry<CustomerEntity> response = await _context.Customer.AddAsync(customerEntity);
             await _context.SaveChangesAsync();
             return await GetCustomer(response.Entity.Id);
         }
         public async Task<bool> DeleteCustomers(long id)
         {
             CustomerEntity customerEntity = await GetCustomer(id);
-            _context.Customers.Remove(customerEntity);
+            _context.Customer.Remove(customerEntity);
             await _context.SaveChangesAsync();
             return true;
         }
 
         public async Task<List<CustomerDto>> GetCustomerAll()
         {
-            return await _context.Customers.Select(x => x.ToDto()).ToListAsync();
+            return await _context.Customer.Select(x => x.ToDto()).ToListAsync();
         }
 
         public async Task<List<CustomerDto>> UpdateCustomer(Customer customer)
         {
-            CustomerEntity customerEntity = await _context.Customers.FirstAsync(x=>x.Id==customer.Id);
+            CustomerEntity customerEntity = await _context.Customer.FirstAsync(x=>x.Id==customer.Id);
             customerEntity.FirstName = customer.FirstName;
             customerEntity.Email = customer.Email;
             customerEntity.Phone = customer.Phone;

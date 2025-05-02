@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PracticaJWTcore.Models;
+
+
 
 public partial class Customer
 {
