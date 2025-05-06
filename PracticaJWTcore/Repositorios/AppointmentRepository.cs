@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PracticaJWTcore.Models;
+using PracticaJWTcore.Dtos;
 
 namespace PracticaJWTcore.Repositorios
 {
@@ -42,9 +43,15 @@ namespace PracticaJWTcore.Repositorios
             return await _context.Appointments.FirstAsync(x => x.AppointmentId == id);
         }
 
-        public async Task<IEnumerable<Appointment>> GetAppointmentAll()
+        public async Task<IEnumerable<AppoitmentDTO>> GetAppointmentAll()
         {
-            return await _context.Appointments.ToListAsync();
+            return await _context.Appointments.Select(x => new AppoitmentDTO
+            {
+                AppointmentId = x.AppointmentId,
+                AppointmentDate = x.AppointmentDate,
+                EmployeeString = _context.Customers.Where(e=>e.Id==x.EmployeeId).Select(e=>e.FirstName).FirstOrDefault()
+
+            }).ToListAsync();
         }
 
         public async Task<IEnumerable<Appointment>> UpdateAppointment(Appointment appointment)

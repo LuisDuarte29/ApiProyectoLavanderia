@@ -10,7 +10,7 @@ public partial class Appointment
 
     public long? VehicleId { get; set; }
 
-    public long? EmployeeId { get; set; }
+    public long EmployeeId { get; set; }
 
     public DateTime? AppointmentDate { get; set; }
 

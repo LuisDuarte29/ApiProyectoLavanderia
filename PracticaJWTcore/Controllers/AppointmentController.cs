@@ -7,7 +7,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles ="Admin")]
+    [Authorize]
     public class AppointmentController : Controller
     {
         private readonly IAppointmentServices _appointmentServices;

@@ -16,6 +16,7 @@ public partial class PracticaJWTcoreContext : DbContext
     }
 
     public virtual DbSet<Appointment> Appointments { get; set; }
+    public virtual DbSet<Customer> Customers { get; set; }
 
     public virtual DbSet<Service> Services { get; set; }
 
