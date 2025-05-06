@@ -9,7 +9,7 @@ namespace PracticaJWTcore.Repositorios
     public class AppointmentRepository : IAppointmentRepository
     {
         private readonly PracticaJWTcoreContext _context;
-        private readonly CustomerDataBaseCustomer _contextCustomer;
+  
         public AppointmentRepository(PracticaJWTcoreContext context) {
 
 
@@ -45,7 +45,7 @@ namespace PracticaJWTcore.Repositorios
             {
                 AppointmentId = x.AppointmentId,
                 AppointmentDate = x.AppointmentDate,
-                EmployeeString = _contextCustomer.Customer
+                EmployeeString = _context.Customer
                .Where(e => e.Id == x.EmployeeId)
                .Select(e => e.FirstName)
                .FirstOrDefault() ?? string.Empty, // Fix for CS8601
@@ -63,7 +63,7 @@ namespace PracticaJWTcore.Repositorios
             {
                 AppointmentId = x.AppointmentId,
                 AppointmentDate = x.AppointmentDate,
-                EmployeeString = _contextCustomer.Customer
+                EmployeeString = _context.Customer
                     .Where(e => e.Id == x.EmployeeId)
                     .Select(e => e.FirstName)
                     .FirstOrDefault() ?? string.Empty, // Fix for CS8601
