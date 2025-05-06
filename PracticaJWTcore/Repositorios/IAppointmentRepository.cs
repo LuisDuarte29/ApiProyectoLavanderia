@@ -1,13 +1,14 @@
 ﻿using PracticaJWTcore.Models;
+using PracticaJWTcore.Dtos;
 
 namespace PracticaJWTcore.Repositorios
 {
     public interface IAppointmentRepository
     {
-        Task<IEnumerable<Appointment>> GetAppointmentAll();
-        Task<Appointment> GetAppointment(long id);
+        Task<IEnumerable<AppoitmentDTO>> GetAppointmentAll();
+        Task<AppoitmentDTO> GetAppointment(long id);
         Task<bool> DeleteApointment(long id);
         Task<long> CreateAppointment(Appointment appointment);
-        Task<IEnumerable<Appointment>> UpdateAppointment(Appointment appointment);
+        Task<IEnumerable<AppoitmentDTO>> UpdateAppointment(Appointment appointment);
 }
     }

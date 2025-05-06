@@ -1,4 +1,5 @@
-﻿using PracticaJWTcore.Models;
+﻿using PracticaJWTcore.Dtos;
+using PracticaJWTcore.Models;
 using PracticaJWTcore.Repositorios;
 
 namespace PracticaJWTcore.Services
@@ -20,17 +21,17 @@ namespace PracticaJWTcore.Services
             return _appointmentRepository.DeleteApointment(id);
         }
 
-        public Task<Appointment> GetAppointment(long id)
+        public Task<AppoitmentDTO> GetAppointment(long id)
         {
             return _appointmentRepository.GetAppointment(id);
         }
 
-        public async Task<IEnumerable<Appointment>> GetAppointmentAll()
+        public async Task<IEnumerable<AppoitmentDTO>> GetAppointmentAll()
         {
             return await _appointmentRepository.GetAppointmentAll();
         }
 
-        public async Task<IEnumerable<Appointment>> UpdateAppointment(Appointment appointment)
+        public async Task<IEnumerable<AppoitmentDTO>> UpdateAppointment(Appointment appointment)
         {
             return await _appointmentRepository.UpdateAppointment(appointment);
             

@@ -9,6 +9,7 @@ namespace PracticaJWTcore.Repositorios
     public class AppointmentRepository : IAppointmentRepository
     {
         private readonly PracticaJWTcoreContext _context;
+        private readonly CustomerDataBaseCustomer _contextCustomer;
         public AppointmentRepository(PracticaJWTcoreContext context) {
 
 
@@ -38,9 +39,22 @@ namespace PracticaJWTcore.Repositorios
             return true;
         }
 
-        public async Task<Appointment> GetAppointment(long id)
+        public async Task<AppoitmentDTO?> GetAppointment(long id)
         {
-            return await _context.Appointments.FirstAsync(x => x.AppointmentId == id);
+            return await _context.Appointments.Where(m=>m.AppointmentId==id).Select(x => new AppoitmentDTO
+            {
+                AppointmentId = x.AppointmentId,
+                AppointmentDate = x.AppointmentDate,
+                EmployeeString = _contextCustomer.Customer
+               .Where(e => e.Id == x.EmployeeId)
+               .Select(e => e.FirstName)
+               .FirstOrDefault() ?? string.Empty, // Fix for CS8601
+                Comments = x.Comments,
+                VehicleString = _context.Vehicles
+               .Where(e => e.VehicleId == x.VehicleId)
+               .Select(e => e.OwnerName)
+               .FirstOrDefault() ?? string.Empty // Fix for CS8601
+            }).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<AppoitmentDTO>> GetAppointmentAll()
@@ -49,12 +63,19 @@ namespace PracticaJWTcore.Repositorios
             {
                 AppointmentId = x.AppointmentId,
                 AppointmentDate = x.AppointmentDate,
-                EmployeeString = _context.Customers.Where(e=>e.Id==x.EmployeeId).Select(e=>e.FirstName).FirstOrDefault()
-
+                EmployeeString = _contextCustomer.Customer
+                    .Where(e => e.Id == x.EmployeeId)
+                    .Select(e => e.FirstName)
+                    .FirstOrDefault() ?? string.Empty, // Fix for CS8601
+                Comments = x.Comments,
+                VehicleString = _context.Vehicles
+                    .Where(e => e.VehicleId == x.VehicleId)
+                    .Select(e => e.OwnerName)
+                    .FirstOrDefault() ?? string.Empty // Fix for CS8601
             }).ToListAsync();
         }
 
-        public async Task<IEnumerable<Appointment>> UpdateAppointment(Appointment appointment)
+        public async Task<IEnumerable<AppoitmentDTO>> UpdateAppointment(Appointment appointment)
         {
             Appointment appointment1 = await _context.Appointments.FirstAsync(x => x.AppointmentId == appointment.AppointmentId);
 
