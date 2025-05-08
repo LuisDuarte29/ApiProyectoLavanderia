@@ -67,7 +67,6 @@ builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAutenticacionRepository, AutenticacionRespository>();
 builder.Services.AddScoped<IPedidosRepository, PedidosRepository>();
-
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 builder.Services.AddScoped<IServiceServices, ServiceServices>();
 builder.Services.AddScoped<IAppointmentServices, AppoitmentServices>();
