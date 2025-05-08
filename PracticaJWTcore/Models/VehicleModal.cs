@@ -2,7 +2,7 @@
 {
     public class VehicleModal
     {
-        public int Id { get; set; }
+        public long IdVehicle { get; set; }
         public string? VehicleName { get; set; }
     }
 }

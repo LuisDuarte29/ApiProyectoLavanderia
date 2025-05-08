@@ -1,0 +1,37 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PracticaJWTcore.Models;
+using PracticaJWTcore.Repositorios;
+using PracticaJWTcore.Services;
+
+
+namespace PracticaJWTcore.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PaginaBaseController : Controller
+    {
+        public readonly IVehicleModal _vehicleModal;
+        public readonly ICustomerModal _customerModal;
+
+        public PaginaBaseController(IVehicleModal vehicleModal, ICustomerModal customerModal)
+        {
+            _vehicleModal = vehicleModal;
+            _customerModal = customerModal;
+        }
+
+        [HttpGet("vehicle")]
+        public async Task<IActionResult> VehicleModalGetAll()
+        {
+            var vehicleModalsList = await _vehicleModal.VehicleModalGetAll();
+            return new OkObjectResult(vehicleModalsList);
+        }
+        [HttpGet("customer")]
+        public async Task<IActionResult> CustomerModalGetAll()
+        {
+            var customerModalsList = await _customerModal.CustomerModalGetAll();
+            return new OkObjectResult(customerModalsList);
+        }
+
+    }
+}

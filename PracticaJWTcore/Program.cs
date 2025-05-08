@@ -72,6 +72,7 @@ builder.Services.AddScoped<IServiceServices, ServiceServices>();
 builder.Services.AddScoped<IAppointmentServices, AppoitmentServices>();
 builder.Services.AddScoped<IAutenticacionServices, AutenticacionServices>();
 builder.Services.AddScoped<IPedidosServices, PedidosServices>();
+builder.Services.AddScoped<IVehicleModal, VehicleModalServices>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine("Cadena de conexión: " + connectionString);
