@@ -15,17 +15,26 @@ namespace PracticaJWTcore.Repositorios
 
             _context = context;
         }
-        public async Task<long> CreateAppointment(Appointment appointments)
+        public async Task<long> CreateAppointment(CreateAppoitmentDetailsDTO appointments)
         {
             Appointment appointment = new Appointment()
             {
-                AppointmentId=0,
+             
                 AppointmentDate=appointments.AppointmentDate,
-                Employee=appointments.Employee,
-                Vehicle=appointments.Vehicle,
+                EmployeeId =appointments.Employee,
+                VehicleId=appointments.Vehicle,
                 Comments=appointments.Comments
             };
             _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+          var servicesDetails=appointments.Services.Select(s => new AppointmentService
+            {
+                AppointmentId = appointment.AppointmentId,
+                ServiceId = s.ServiceId,
+                Estado = "Pendiente"
+            });
+            await _context.AppointmentServices.AddRangeAsync(servicesDetails);
             await _context.SaveChangesAsync();
             return appointment.AppointmentId;
 

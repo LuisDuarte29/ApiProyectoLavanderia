@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PracticaJWTcore.Dtos;
 using PracticaJWTcore.Models;
 using PracticaJWTcore.Services;
 
@@ -7,7 +8,6 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class AppointmentController : Controller
     {
         private readonly IAppointmentServices _appointmentServices;
@@ -35,10 +35,10 @@ namespace PracticaJWTcore.Controllers
             return response ? Ok() : NotFound();
         }
         [HttpPost]
-        public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
+        public async Task<IActionResult> CreateAppointment([FromBody] CreateAppoitmentDetailsDTO appointment)
         {
             var response = await _appointmentServices.CreateAppointment(appointment);
-            return new CreatedResult($"https://localhost:7184/api/Appointment/{appointment.AppointmentId}", null);
+            return new CreatedResult($"https://localhost:7184/api/Appointment/{response}", null);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateAppointment([FromBody] Appointment appointment)

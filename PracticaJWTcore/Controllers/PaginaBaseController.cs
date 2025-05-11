@@ -13,11 +13,13 @@ namespace PracticaJWTcore.Controllers
     {
         public readonly IVehicleModal _vehicleModal;
         public readonly ICustomerModal _customerModal;
+        public readonly IServicioModal _servicioModal;
 
-        public PaginaBaseController(IVehicleModal vehicleModal, ICustomerModal customerModal)
+        public PaginaBaseController(IVehicleModal vehicleModal, ICustomerModal customerModal, IServicioModal servicioModal)
         {
             _vehicleModal = vehicleModal;
             _customerModal = customerModal;
+            _servicioModal = servicioModal;
         }
 
         [HttpGet("vehicle")]
@@ -31,6 +33,13 @@ namespace PracticaJWTcore.Controllers
         {
             var customerModalsList = await _customerModal.CustomerModalGetAll();
             return new OkObjectResult(customerModalsList);
+        }
+        [HttpGet("servicios")]
+
+        public async Task<IActionResult> ServiciosModalGetAll()
+        {
+            var serviciosModalsList = await _servicioModal.ServiciosModalsGetAll();
+            return new OkObjectResult(serviciosModalsList);
         }
 
     }

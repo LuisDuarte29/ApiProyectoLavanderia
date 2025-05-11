@@ -8,7 +8,7 @@ namespace PracticaJWTcore.Services
       Task<IEnumerable<AppoitmentDTO>> GetAppointmentAll();
         Task<AppoitmentDTO> GetAppointment(long id);
         Task<bool> DeleteApointment(long id);
-        Task<long> CreateAppointment(Appointment appointment);
+        Task<long> CreateAppointment(CreateAppoitmentDetailsDTO appointment);
         Task<IEnumerable<AppoitmentDTO>> UpdateAppointment(Appointment appointment);
     }
 }

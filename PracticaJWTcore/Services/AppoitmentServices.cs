@@ -11,7 +11,7 @@ namespace PracticaJWTcore.Services
         public AppoitmentServices(IAppointmentRepository appointmentRepository) {
             _appointmentRepository = appointmentRepository;
         }
-        public Task<long> CreateAppointment(Appointment appointment)
+        public Task<long> CreateAppointment(CreateAppoitmentDetailsDTO appointment)
         {
             return _appointmentRepository.CreateAppointment(appointment);
 
