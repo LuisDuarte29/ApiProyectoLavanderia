@@ -19,7 +19,9 @@ namespace PracticaJWTcore.Services
             {
 
                 ServiceId = x.ServiceId,
-                ServiceName = x.ServiceName
+                ServiceName = x.ServiceName,
+                Precio = x.Price.ToString()// Formato de mo
+
             }).ToListAsync();
             return serviciosModals;
         }
