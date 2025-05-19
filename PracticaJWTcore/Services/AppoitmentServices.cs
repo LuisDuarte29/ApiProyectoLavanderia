@@ -31,7 +31,7 @@ namespace PracticaJWTcore.Services
             return await _appointmentRepository.GetAppointmentAll();
         }
 
-        public async Task<IEnumerable<AppoitmentDTO>> UpdateAppointment(Appointment appointment)
+        public async Task<IEnumerable<AppoitmentDTO>> UpdateAppointment(UpdateAppoitmentDetailsDTO appointment)
         {
             return await _appointmentRepository.UpdateAppointment(appointment);
             

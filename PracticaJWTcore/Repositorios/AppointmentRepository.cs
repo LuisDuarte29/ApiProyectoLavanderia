@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PracticaJWTcore.Models;
 using PracticaJWTcore.Dtos;
+using PracticaJWTcore.Services;
 
 namespace PracticaJWTcore.Repositorios
 {
@@ -54,6 +55,9 @@ namespace PracticaJWTcore.Repositorios
             {
                 AppointmentId = x.AppointmentId,
                 AppointmentDate = x.AppointmentDate,
+                VehicleId=x.VehicleId,
+                EmployeeId=x.EmployeeId,
+                ServiceId=_context.AppointmentServices.Where(e=>e.AppointmentId==x.AppointmentId).Select(e => e.ServiceId).ToList(),
                 EmployeeString = _context.Customer
                .Where(e => e.Id == x.EmployeeId)
                .Select(e => e.FirstName)
@@ -84,14 +88,54 @@ namespace PracticaJWTcore.Repositorios
             }).ToListAsync();
         }
 
-        public async Task<IEnumerable<AppoitmentDTO>> UpdateAppointment(Appointment appointment)
+        public async Task<IEnumerable<AppoitmentDTO>> UpdateAppointment(UpdateAppoitmentDetailsDTO appointment)
         {
-            Appointment appointment1 = await _context.Appointments.FirstAsync(x => x.AppointmentId == appointment.AppointmentId);
+            //Verificar si el appoitment existe y me trae el registro y sus servicios
+            Appointment appointment1 = await _context.Appointments.Include(a=>a.AppointmentServices).FirstAsync(a => a.AppointmentId == appointment.AppointmentId);
 
+            //Relleno o actualizo los campos de cabecera
             appointment1.AppointmentDate = appointment.AppointmentDate;
-            appointment1.Employee = appointment.Employee;
-            appointment1.Vehicle = appointment.Vehicle;
+            appointment1.EmployeeId = appointment.Employee;
+            appointment1.VehicleId = appointment.Vehicle;
             appointment1.Comments = appointment.Comments;
+
+            //Enlisto los servicios que vienen del front y los que ya existen en la base de datos
+            var inServicesIdUpdate = appointment.Services.Select(y => y.ServiceId).ToList();
+            var existingId = appointment1.AppointmentServices.Select(s => s.ServiceId).ToList();
+
+
+            //Verifico los servicios que se agregan y los que se eliminan con el except donde el primero es el que se queda 
+            //y el segundo es el que se elimina
+            var servicesToAdd = inServicesIdUpdate.Except(existingId).ToList();
+            var servicesToRemove=existingId.Except(inServicesIdUpdate).ToList();
+
+            //Agrego los servicios nuevos en la base de datos
+            foreach (var item in servicesToAdd)
+            {
+                var appointmentService = new AppointmentService
+                {
+                    AppointmentId = appointment.AppointmentId,
+                    ServiceId = item,
+                    Estado = "Pendiente" // Asumiendo que agregaste este campo
+                };
+
+                _context.AppointmentServices.Add(appointmentService);
+            }
+            
+
+            //Elimino los servicios que ya no existen en la base de datos
+            foreach(var item in servicesToRemove)
+            {
+                var appoitmentService = await _context.AppointmentServices.FirstOrDefaultAsync(x => x.ServiceId == item && x.AppointmentId==appointment.AppointmentId );
+            
+                if (appoitmentService != null)
+                {
+                    _context.AppointmentServices.Remove(appoitmentService);
+                }
+            }
+
+
+
             await _context.SaveChangesAsync();
             return await GetAppointmentAll();
         }

@@ -41,7 +41,7 @@ namespace PracticaJWTcore.Controllers
             return new CreatedResult($"https://localhost:7184/api/Appointment/{response}", null);
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateAppointment([FromBody] Appointment appointment)
+        public async Task<IActionResult> UpdateAppointment([FromBody] UpdateAppoitmentDetailsDTO appointment)
         {
             var response= await _appointmentServices.UpdateAppointment(appointment);
             return new OkObjectResult(response);
