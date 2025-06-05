@@ -54,8 +54,10 @@ namespace PracticaJWTcore.Repositorios
             return await GetServiceAll();
         }
 
-   
-
+        public async Task<List<Articulos>> GetAllArticulos()
+        {
+            return await _context.Articulos.ToListAsync();
+        }
     }
 }
 

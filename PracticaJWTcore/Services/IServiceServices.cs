@@ -15,5 +15,6 @@ namespace PracticaJWTcore.Services
         Task<List<Service>> GetServiceAll();
 
         Task<List<Service>> UpdateServices(Service services);
+        Task<List<Articulos>> GetArticulos();
     }
 }

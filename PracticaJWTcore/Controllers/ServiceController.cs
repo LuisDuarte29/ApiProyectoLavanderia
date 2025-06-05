@@ -48,6 +48,12 @@ namespace PracticaJWTcore.Controllers
           var response=  await _serviceServices.UpdateServices(appointment);
             return new OkObjectResult(response);
         }
+        [HttpGet("Articulos")]
+        public async Task<IActionResult> GetArticulos()
+        {
+            var articulos = await _serviceServices.GetArticulos();
+            return new OkObjectResult(articulos);
+        }
 
     }
 }

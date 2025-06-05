@@ -31,6 +31,8 @@ public partial class PracticaJWTcoreContext : DbContext
     public virtual DbSet<RolesPermisos> RolesPermisos { get; set; }
     public virtual DbSet<AppointmentService> AppointmentServices { get; set; }
 
+    public virtual DbSet<Articulos> Articulos { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
 
@@ -163,6 +165,20 @@ public partial class PracticaJWTcoreContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("PermisoNombre");
         });
+        modelBuilder.Entity<Articulos>(entity =>
+        {
+            entity.HasKey(p => p.IdArticulo);
+            entity.ToTable("Articulos");
+
+            entity.Property(p => p.NombreArticulo)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("NombreArticulo");
+            entity.Property(p=>p.Precio)
+            .HasColumnType("decimal(10, 2)")
+                .HasColumnName("Precio");
+        });
+
         modelBuilder.Entity<Vehicle>(entity =>
         {
             entity.Property(e => e.VehicleId).HasColumnName("VehicleID");

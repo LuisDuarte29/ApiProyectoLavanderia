@@ -36,5 +36,11 @@ namespace PracticaJWTcore.Services
         {
             return await _context.UpdateServices(services);
         }
+
+        public Task<List<Articulos>> GetArticulos()
+        {
+            return _context.GetAllArticulos();
+        }
+        
     }
 }
