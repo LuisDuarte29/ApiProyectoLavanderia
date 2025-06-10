@@ -83,32 +83,54 @@ namespace PracticaJWTcore.Repositorios
             }
 
         }
-        public Task<int> CambioClave(string nuevaClave, string correo)
+        public Task<int> CambioClave(CambioClave cambios)
         {
+            int filasAfectadas = 0;
             using (var conecction = new SqlConnection(conection))
             {
-                using (var command = new SqlCommand("proc_CambioClave", conecction))
+
+                using (var command=new SqlCommand("ComparePass", conecction))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@Correo", correo);
-                    command.Parameters.AddWithValue("@NuevaClave", nuevaClave);
-
+                    command.Parameters.AddWithValue("@correo", cambios.correo);
+                    command.Parameters.AddWithValue("@ContraseñaActual", cambios.claveActual);
+                    SqlParameter ouputParameter = command.Parameters.Add("@resultPass", SqlDbType.Int);
+                    ouputParameter.Direction = ParameterDirection.Output;
                     conecction.Open();
-                    int filasAfectadas = command.ExecuteNonQuery();
+
+                    command.ExecuteNonQuery();
+
+                   int result = (int)ouputParameter.Value;
                     conecction.Close();
-                    if (filasAfectadas > 0)
+                    if (result != 0)
                     {
-                        return Task.FromResult(1); // Cambio exitoso
-                    }
-                    else
-                    {
-                        return Task.FromResult(0); // No se realizó ningún cambio 
+                        using (var commandCambio = new SqlCommand("CambioClave", conecction))
+                        {
+                            commandCambio.CommandType = CommandType.StoredProcedure;
+                            commandCambio.Parameters.AddWithValue("@correo", cambios.correo);
+                            commandCambio.Parameters.AddWithValue("@NuevaClave", cambios.nuevaClave);
 
-                    }
+                            conecction.Open();
+                             filasAfectadas = commandCambio.ExecuteNonQuery();
+                            conecction.Close();
+                       
 
+                        }
+                    }
                 }
-            }
 
+
+             
+            }
+            if (filasAfectadas > 0)
+            {
+                return Task.FromResult(1); // Cambio exitoso
+            }
+            else
+            {
+                return Task.FromResult(0); // No se realizó ningún cambio 
+
+            }
 
         }
     }

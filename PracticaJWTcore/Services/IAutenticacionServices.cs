@@ -5,7 +5,7 @@ namespace PracticaJWTcore.Services
 {
     public interface IAutenticacionServices
     {
-        Task<int> CambioClave(string nuevaClave, string correo);
+        Task<int> CambioClave(CambioClave cambio);
         Task<string> Login(UsuarioLogin usuario);
     }
 }

@@ -11,9 +11,9 @@ namespace PracticaJWTcore.Services
             _context = context;
         }
 
-        public async Task<int> CambioClave(string nuevaClave, string correo)
+        public async Task<int> CambioClave(CambioClave cambio)
         {
-            return await _context.CambioClave(nuevaClave, correo);
+            return await _context.CambioClave(cambio);
         }
 
         public async Task<string> Login(UsuarioLogin usuario)

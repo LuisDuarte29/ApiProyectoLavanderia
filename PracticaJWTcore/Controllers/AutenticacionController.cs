@@ -1,5 +1,4 @@
 ﻿
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
@@ -25,14 +24,14 @@ namespace PracticaJWTcore.Controllers
         public async Task<IActionResult> Login([FromBody] UsuarioLogin loginModel)
         {
             var response= await _autenticacionRepository.Login(loginModel);
-            return response!=null ? StatusCode(StatusCodes.Status200OK, new { token = response }) : StatusCode(StatusCodes.Status401Unauthorized, new { token = "" });
+            return response!=null ? StatusCode(StatusCodes.Status200OK, new { token = response }) : StatusCode(StatusCodes.Status204NoContent, new { token = "" });
       
         
         }
-        [HttpPut("CambioClave")]
-        public async Task<IActionResult> CambioClave([FromBody] string nuevaClave,string correo)
+        [HttpPost("CambioClave")]
+        public async Task<IActionResult> CambioClave([FromBody] CambioClave cambio)
         {
-            var response = await _autenticacionRepository.CambioClave(nuevaClave, correo);
+            var response = await _autenticacionRepository.CambioClave(cambio);
 
             return response > 0 ? Ok(): base.StatusCode(StatusCodes.Status400BadRequest, new { message = "Error al cambiar la clave" });
         }
