@@ -16,7 +16,7 @@ namespace PracticaJWTcore.Repositorios
         private readonly PracticaJWTcoreContext _context;
         private readonly string secretKey;
         private readonly string conection;
-        public AutenticacionRespository(PracticaJWTcoreContext context,IConfiguration configuration)
+        public AutenticacionRespository(PracticaJWTcoreContext context, IConfiguration configuration)
         {
             _context = context;
             this.secretKey = configuration.GetSection("JWT").GetSection("Key").ToString();
@@ -24,7 +24,7 @@ namespace PracticaJWTcore.Repositorios
         }
         public async Task<string> GenerateToken(UsuarioLogin usuario, List<string> roles, int result)
         {
-          
+
             byte[] token;
             string TokenCreado = "";
             if (result == 1)
@@ -46,7 +46,7 @@ namespace PracticaJWTcore.Repositorios
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var tokenConfig = tokenHandler.CreateToken(tokenDescriptor);
                 var tokenCread = tokenHandler.WriteToken(tokenConfig);
-                return TokenCreado=tokenCread;
+                return TokenCreado = tokenCread;
             }
             else
             {
@@ -55,7 +55,7 @@ namespace PracticaJWTcore.Repositorios
         }
 
 
-        
+
         public async Task<string> Login(UsuarioLogin usuario)
         {
 
@@ -77,13 +77,39 @@ namespace PracticaJWTcore.Repositorios
                     result = (int)ouputParameter.Value;
                     await conecction.CloseAsync();
                 }
-            var Roles= usuarioRoles.UsuariosRoles.Select(x=>x.Rol.RoleName).ToList();
+                var Roles = usuarioRoles.UsuariosRoles.Select(x => x.Rol.RoleName).ToList();
                 return await GenerateToken(usuario, Roles, result);
 
             }
-          
-        }
 
-      
+        }
+        public Task<int> CambioClave(string nuevaClave, string correo)
+        {
+            using (var conecction = new SqlConnection(conection))
+            {
+                using (var command = new SqlCommand("proc_CambioClave", conecction))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Correo", correo);
+                    command.Parameters.AddWithValue("@NuevaClave", nuevaClave);
+
+                    conecction.Open();
+                    int filasAfectadas = command.ExecuteNonQuery();
+                    conecction.Close();
+                    if (filasAfectadas > 0)
+                    {
+                        return Task.FromResult(1); // Cambio exitoso
+                    }
+                    else
+                    {
+                        return Task.FromResult(0); // No se realizó ningún cambio 
+
+                    }
+
+                }
+            }
+
+
+        }
     }
 }

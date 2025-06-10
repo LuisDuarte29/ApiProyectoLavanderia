@@ -29,5 +29,12 @@ namespace PracticaJWTcore.Controllers
       
         
         }
+        [HttpPut("CambioClave")]
+        public async Task<IActionResult> CambioClave([FromBody] string nuevaClave,string correo)
+        {
+            var response = await _autenticacionRepository.CambioClave(nuevaClave, correo);
+
+            return response > 0 ? Ok(): base.StatusCode(StatusCodes.Status400BadRequest, new { message = "Error al cambiar la clave" });
+        }
     }
 }
