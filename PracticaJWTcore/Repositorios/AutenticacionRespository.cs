@@ -22,7 +22,7 @@ namespace PracticaJWTcore.Repositorios
             this.secretKey = configuration.GetSection("JWT").GetSection("Key").ToString();
             this.conection = configuration.GetConnectionString("DefaultConnection");
         }
-        public async Task<string> GenerateToken(UsuarioLogin usuario, List<string> roles, int result)
+        public async Task<string> GenerateToken(UsuarioLogin usuario, string roles, int result)
         {
 
             byte[] token;
@@ -31,10 +31,7 @@ namespace PracticaJWTcore.Repositorios
             {
                 token = Encoding.ASCII.GetBytes(secretKey);
                 var claims = new ClaimsIdentity();
-                foreach (var rol in roles)
-                {
-                    claims.AddClaim(new Claim(ClaimTypes.Role, rol));
-                }
+                claims.AddClaim(new Claim(ClaimTypes.Role, roles));
                 claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.correo));
 
                 var tokenDescriptor = new SecurityTokenDescriptor
@@ -59,8 +56,7 @@ namespace PracticaJWTcore.Repositorios
         public async Task<string> Login(UsuarioLogin usuario)
         {
 
-            var usuarioRoles = await _context.Usuarios.Include(u => u.UsuariosRoles).ThenInclude(ur => ur.Rol)
-                .ThenInclude(o => o.RolesPermisos).ThenInclude(p => p.Permisos).FirstOrDefaultAsync(u => u.correo == usuario.correo);
+            var usuarioRoles = await _context.Usuarios.Where(x => x.correo == usuario.correo).Select(x => x.RoleId).FirstOrDefaultAsync();
 
             int result = 0;
             using (var conecction = new SqlConnection(conection))
@@ -77,7 +73,7 @@ namespace PracticaJWTcore.Repositorios
                     result = (int)ouputParameter.Value;
                     await conecction.CloseAsync();
                 }
-                var Roles = usuarioRoles.UsuariosRoles.Select(x => x.Rol.RoleName).ToList();
+                var Roles = await _context.Roles.Where(x => x.RoleId == usuarioRoles).Select(x => x.RoleName).FirstOrDefaultAsync();
                 return await GenerateToken(usuario, Roles, result);
 
             }

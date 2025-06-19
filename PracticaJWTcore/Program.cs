@@ -66,6 +66,7 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAutenticacionRepository, AutenticacionRespository>();
+builder.Services.AddScoped<IUsuariosRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPedidosRepository, PedidosRepository>();
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 builder.Services.AddScoped<IServiceServices, ServiceServices>();
@@ -75,6 +76,7 @@ builder.Services.AddScoped<IPedidosServices, PedidosServices>();
 builder.Services.AddScoped<IVehicleModal, VehicleModalServices>();
 builder.Services.AddScoped<ICustomerModal, CustomerModalServices>();
 builder.Services.AddScoped<IServicioModal, ServiciosModalServices>();
+builder.Services.AddScoped<IUsuarioServices, UsuarioServices>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine("Cadena de conexión: " + connectionString);
