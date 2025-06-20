@@ -25,5 +25,13 @@ namespace PracticaJWTcore.Services
         {
             return _context.GetAllUsuarios();
         }
-    }
+
+        public async Task<List<RolesDTO>> GetRolesList()
+        {
+            return await _context.GetRolesList();
+        }
+        public async Task<List<PermisosDTO>> PermisosRoleList(int roleId)
+        {
+            return await _context.PermisosRoleList(roleId);
+        }
 }

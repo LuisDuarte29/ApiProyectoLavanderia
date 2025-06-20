@@ -14,7 +14,7 @@ namespace PracticaJWTcore.Controllers
         }
 
         [HttpPost("api/Usuarios/CreateUsuario")]
-        public async Task<IActionResult> CreateUsuario(CreateUsuariosDTO createUsuario)
+        public async Task<IActionResult> CreateUsuario([FromBody]CreateUsuariosDTO createUsuario)
         {
             bool Usuario = await _usuariosRepository.CreateUsuarios(createUsuario);
             return Usuario ? Ok() : NotFound();
@@ -31,6 +31,12 @@ namespace PracticaJWTcore.Controllers
         {
             var usuarios = await _usuariosRepository.GetAllUsuarios();
             return new OkObjectResult(usuarios);
+        }
+        [HttpGet("api/Usuarios/GetRoleList")]
+        public async Task<IActionResult> GetRoleList()
+        {
+            var rolesList = await _usuariosRepository.GetRolesList();
+            return new OkObjectResult(rolesList);
         }
     }
 }

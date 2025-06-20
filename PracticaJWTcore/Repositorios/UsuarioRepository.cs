@@ -4,6 +4,7 @@ using PracticaJWTcore.Models;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq.Expressions;
+using System.Security;
 
 namespace PracticaJWTcore.Repositorios
 {
@@ -71,6 +72,25 @@ namespace PracticaJWTcore.Repositorios
                 Customer = _context.Customer.Where(c => c.Id == x.CustomerID).Select(p => p.FirstName).FirstOrDefault(),
                 Role = _context.Roles.Where(rol => rol.RoleId == x.RoleId).Select(c => c.RoleName).FirstOrDefault(),
             }).ToListAsync();
+        }
+
+        public async Task<List<RolesDTO>> GetRolesList()
+        {
+            return await _context.Roles.Select(x => new RolesDTO
+            {
+                RoleId = x.RoleId,
+                RoleName = x.RoleName
+            }).ToListAsync();
+        }
+        public async Task<List<PermisosDTO>> PermisosRoleList(int roleId)
+        {
+            var permisos = await _context.RolesPermisos.Where(rp => rp.RoleId == roleId)
+                .Select(rp => new PermisosDTO
+                {
+                   PermisoId = rp.PermisoId
+                }).ToListAsync();
+  
+            return permisos;
         }
     }
 }
