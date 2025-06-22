@@ -14,15 +14,15 @@ namespace PracticaJWTcore.Controllers
         }
 
         [HttpPost("api/Usuarios/CreateUsuario")]
-        public async Task<IActionResult> CreateUsuario([FromBody]CreateUsuariosDTO createUsuario)
+        public async Task<IActionResult> CreateUsuario([FromBody] CreateUsuariosDTO createUsuario)
         {
             bool Usuario = await _usuariosRepository.CreateUsuarios(createUsuario);
             return Usuario ? Ok() : NotFound();
         }
         [HttpGet("api/Usuarios/GetRoles")]
         public async Task<IActionResult> GetAllRoles()
-         
-       {
+
+        {
             var roles = await _usuariosRepository.GetAllRoles();
             return new OkObjectResult(roles);
         }
@@ -37,6 +37,12 @@ namespace PracticaJWTcore.Controllers
         {
             var rolesList = await _usuariosRepository.GetRolesList();
             return new OkObjectResult(rolesList);
+        }
+        [HttpGet("api/Usuarios/GetListPermisos")]
+        public async Task<IActionResult> GetListPermisos(int roleId)
+        {
+            var permisosList = await _usuariosRepository.PermisosRoleList(roleId);
+            return new OkObjectResult(permisosList);
         }
     }
 }

@@ -11,14 +11,14 @@ namespace PracticaJWTcore.Services
         {
             _context = context;
         }
-        public async  Task<bool> CreateUsuarios(CreateUsuariosDTO usuarioCreate)
+        public async Task<bool> CreateUsuarios(CreateUsuariosDTO usuarioCreate)
         {
-           return await _context.CreateUsuarios(usuarioCreate);
+            return await _context.CreateUsuarios(usuarioCreate);
         }
 
         public async Task<List<RoleModal>> GetAllRoles()
         {
-           return await _context.GetAllRoles();
+            return await _context.GetAllRoles();
         }
 
         public Task<List<UsuarioDTO>> GetAllUsuarios()
@@ -34,4 +34,7 @@ namespace PracticaJWTcore.Services
         {
             return await _context.PermisosRoleList(roleId);
         }
+
+ 
+    }
 }
