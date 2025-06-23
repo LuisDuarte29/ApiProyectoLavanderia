@@ -38,10 +38,16 @@ namespace PracticaJWTcore.Controllers
             var rolesList = await _usuariosRepository.GetRolesList();
             return new OkObjectResult(rolesList);
         }
-        [HttpGet("api/Usuarios/GetListPermisos")]
+        [HttpGet("api/Usuarios/GetListPermisos/{roleId}")]
         public async Task<IActionResult> GetListPermisos(int roleId)
         {
             var permisosList = await _usuariosRepository.PermisosRoleList(roleId);
+            return new OkObjectResult(permisosList);
+        }
+        [HttpGet("api/Usuarios/GetPermisosList")]
+        public async Task<IActionResult> GetPermisosList()
+        {
+            var permisosList = await _usuariosRepository.GetPermisosList();
             return new OkObjectResult(permisosList);
         }
     }

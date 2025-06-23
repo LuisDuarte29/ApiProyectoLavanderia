@@ -9,6 +9,7 @@ namespace PracticaJWTcore.Services
         Task<bool> CreateUsuarios(CreateUsuariosDTO usuarioCreate);
         Task<List<RoleModal>> GetAllRoles();
         Task<List<RolesDTO>> GetRolesList();
+        Task<List<PermisosModal>> GetPermisosList();
         Task<List<PermisosDTO>> PermisosRoleList(int rolId);
     }
 }
