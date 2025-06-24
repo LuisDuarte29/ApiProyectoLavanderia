@@ -50,5 +50,11 @@ namespace PracticaJWTcore.Controllers
             var permisosList = await _usuariosRepository.GetPermisosList();
             return new OkObjectResult(permisosList);
         }
+        [HttpPut("api/Usuarios/CreatePermisosRole")]
+        public async Task<IActionResult> CreatePermisosRole([FromBody] RolesPermisoDTO rolesPermisos)
+        {
+            bool result = await _usuariosRepository.PermisosRoleCreate(rolesPermisos);
+            return result ? Ok() : NotFound();
+        }
     }
 }

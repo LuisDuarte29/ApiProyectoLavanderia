@@ -100,5 +100,46 @@ namespace PracticaJWTcore.Repositorios
                 PermisoName = x.PermisoNombre
             }).ToListAsync();
         }
+
+        public async Task<bool> PermisosRoleCreate(RolesPermisoDTO r)
+        {
+            var rolesPermisos = await _context.RolesPermisos.Where(x => x.RoleId == r.RoleId).Select(a => a.PermisoId).ToListAsync();
+
+            int[] permisosIdAdd = r.PermisosId.Except(rolesPermisos).ToArray();
+            var permisosIdRemove = rolesPermisos.Except(r.PermisosId);
+
+            if (permisosIdAdd.Length > 0)
+            {
+                foreach (var permisoId in permisosIdAdd)
+                {
+                    var newRolePermiso = new RolesPermisos
+                    {
+                        RoleId = r.RoleId,
+                        PermisoId = permisoId
+                    };
+                    _context.RolesPermisos.Add(newRolePermiso);
+                   _context.SaveChanges();
+                }
+
+            }
+            if (permisosIdRemove.Any())
+            {
+                foreach (var permisoId in permisosIdRemove)
+                {
+                    var rolePermiso = await _context.RolesPermisos.FirstOrDefaultAsync(x => x.RoleId == r.RoleId && x.PermisoId == permisoId);
+                    if (rolePermiso != null)
+                    {
+                        _context.RolesPermisos.Remove(rolePermiso);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+
+
+            return true;
+
+        }
+
+        
     }
 }
