@@ -56,5 +56,11 @@ namespace PracticaJWTcore.Controllers
             bool result = await _usuariosRepository.PermisosRoleCreate(rolesPermisos);
             return result ? Ok() : NotFound();
         }
+        [HttpGet("api/Usuarios/GetComponentsForms")]
+        public async Task<IActionResult> GetComponentsForms()
+        {
+            var componentsForms = await _usuariosRepository.GetComponentsForms();
+            return new OkObjectResult(componentsForms);
+        }
     }
 }

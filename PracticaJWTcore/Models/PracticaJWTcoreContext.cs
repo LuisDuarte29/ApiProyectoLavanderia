@@ -33,6 +33,8 @@ public partial class PracticaJWTcoreContext : DbContext
 
     public virtual DbSet<Articulos> Articulos { get; set; }
 
+    public virtual DbSet<ComponentsForm> ComponentsForm { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
 
@@ -152,6 +154,17 @@ public partial class PracticaJWTcoreContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("RoleName");
+        });
+
+        modelBuilder.Entity<ComponentsForm>(entity =>
+        {
+            entity.HasKey(r => r.ComponentsId);
+            entity.ToTable("ComponentsForm");
+
+            entity.Property(r => r.ComponentsName)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("ComponentsName");
         });
 
         // 📌 Configuración de Permisos

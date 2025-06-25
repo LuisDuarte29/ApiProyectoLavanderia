@@ -139,7 +139,16 @@ namespace PracticaJWTcore.Repositorios
             return true;
 
         }
-
+       public async Task<List<ComponentsForm>> GetComponentsForms()
+        {
+            return await _context.ComponentsForm.Select(x => new ComponentsForm
+            {
+                ComponentsId= x.ComponentsId,
+                ComponentsName = x.ComponentsName
         
+            }).ToListAsync();
+        }
+
+
     }
 }
