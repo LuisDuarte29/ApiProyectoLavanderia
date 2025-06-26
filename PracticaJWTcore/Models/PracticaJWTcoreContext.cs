@@ -144,6 +144,13 @@ public partial class PracticaJWTcoreContext : DbContext
             .HasForeignKey(rp => rp.PermisoId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<RolesPermisos>()
+     .HasOne(rp => rp.ComponentsForm)
+     .WithMany(p => p.RolesPermisos)
+     .HasForeignKey(rp => rp.ComponentsId)
+     .OnDelete(DeleteBehavior.Cascade);
+
+
 
         modelBuilder.Entity<Roles>(entity =>
         {

@@ -82,9 +82,10 @@ namespace PracticaJWTcore.Repositorios
                 RoleName = x.RoleName
             }).ToListAsync();
         }
-        public async Task<List<PermisosDTO>> PermisosRoleList(int roleId)
+        public async Task<List<PermisosDTO>> PermisosRoleList(int roleId, int ComponentsId)
         {
-            var permisos = await _context.RolesPermisos.Where(rp => rp.RoleId == roleId)
+
+            var permisos = await _context.RolesPermisos.Where(rp => rp.RoleId == roleId  && rp.ComponentsId == ComponentsId)
                 .Select(rp => new PermisosDTO
                 {
                     PermisoId = rp.PermisoId
@@ -103,7 +104,7 @@ namespace PracticaJWTcore.Repositorios
 
         public async Task<bool> PermisosRoleCreate(RolesPermisoDTO r)
         {
-            var rolesPermisos = await _context.RolesPermisos.Where(x => x.RoleId == r.RoleId).Select(a => a.PermisoId).ToListAsync();
+            var rolesPermisos = await _context.RolesPermisos.Where(x => x.RoleId == r.RoleId && x.ComponentsId==r.ComponentsFormId).Select(a => a.PermisoId).ToListAsync();
 
             int[] permisosIdAdd = r.PermisosId.Except(rolesPermisos).ToArray();
             var permisosIdRemove = rolesPermisos.Except(r.PermisosId);
@@ -115,7 +116,9 @@ namespace PracticaJWTcore.Repositorios
                     var newRolePermiso = new RolesPermisos
                     {
                         RoleId = r.RoleId,
-                        PermisoId = permisoId
+                        PermisoId = permisoId,
+                        ComponentsId = r.ComponentsFormId
+
                     };
                     _context.RolesPermisos.Add(newRolePermiso);
                    _context.SaveChanges();
@@ -148,7 +151,7 @@ namespace PracticaJWTcore.Repositorios
         
             }).ToListAsync();
         }
-
+        
 
     }
 }

@@ -24,7 +24,7 @@ namespace PracticaJWTcore.Controllers
         public async Task<IActionResult> Login([FromBody] UsuarioLogin loginModel)
         {
             var response= await _autenticacionRepository.Login(loginModel);
-            return response!=null ? StatusCode(StatusCodes.Status200OK, new { token = response }) : StatusCode(StatusCodes.Status204NoContent, new { token = "" });
+            return response!=null ? StatusCode(StatusCodes.Status200OK, new { token=response }) : StatusCode(StatusCodes.Status204NoContent, new { token = "" });
       
         
         }
