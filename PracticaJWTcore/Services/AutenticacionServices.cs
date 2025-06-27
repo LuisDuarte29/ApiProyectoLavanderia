@@ -1,4 +1,5 @@
-﻿using PracticaJWTcore.Models;
+﻿using PracticaJWTcore.Dtos;
+using PracticaJWTcore.Models;
 using PracticaJWTcore.Repositorios;
 
 namespace PracticaJWTcore.Services
@@ -16,7 +17,7 @@ namespace PracticaJWTcore.Services
             return await _context.CambioClave(cambio);
         }
 
-        public async Task<string> Login(UsuarioLogin usuario)
+        public async Task<TokenRolDTO> Login(UsuarioLogin usuario)
         {
             return await _context.Login(usuario);
         }

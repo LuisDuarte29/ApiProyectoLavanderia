@@ -39,7 +39,7 @@ namespace PracticaJWTcore.Controllers
             return new OkObjectResult(rolesList);
         }
         [HttpGet("api/Usuarios/GetListPermisos/{roleId}/{componentsFormSelect}")]
-        public async Task<IActionResult> GetListPermisos(int roleId,int componentsFormSelect)
+        public async Task<IActionResult> GetListPermisos(int roleId,string componentsFormSelect)
        {
             var permisosList = await _usuariosRepository.PermisosRoleList(roleId , componentsFormSelect);
             return new OkObjectResult(permisosList);

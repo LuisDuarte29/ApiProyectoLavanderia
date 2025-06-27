@@ -9,7 +9,7 @@ namespace PracticaJWTcore.Repositorios
         Task<bool> CreateUsuarios(CreateUsuariosDTO usuarioCreate);
         Task<List<RoleModal>> GetAllRoles();
         Task<List<RolesDTO>> GetRolesList();
-        Task<List<PermisosDTO>> PermisosRoleList(int roleId,int ComponentsId);
+        Task<List<PermisosDTO>> PermisosRoleList(int roleId,string ComponentsId);
         Task<List<PermisosModal>> GetPermisosList();
         Task<bool> PermisosRoleCreate(RolesPermisoDTO rolesPermisos);
         Task<List<ComponentsForm>> GetComponentsForms();

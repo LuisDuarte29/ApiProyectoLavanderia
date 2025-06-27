@@ -10,7 +10,7 @@ namespace PracticaJWTcore.Services
         Task<List<RoleModal>> GetAllRoles();
         Task<List<RolesDTO>> GetRolesList();
         Task<List<PermisosModal>> GetPermisosList();
-        Task<List<PermisosDTO>> PermisosRoleList(int rolId, int componentsId);
+        Task<List<PermisosDTO>> PermisosRoleList(int rolId, string componentsId);
         Task<bool> PermisosRoleCreate(RolesPermisoDTO rolesPermisos);
         Task<List<ComponentsForm>> GetComponentsForms();
     }

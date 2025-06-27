@@ -2,6 +2,7 @@
 using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PracticaJWTcore.Dtos;
 using PracticaJWTcore.Models;
 using System.Data;
 using System.Data.SqlClient;
@@ -22,7 +23,7 @@ namespace PracticaJWTcore.Repositorios
             this.secretKey = configuration.GetSection("JWT").GetSection("Key").ToString();
             this.conection = configuration.GetConnectionString("DefaultConnection");
         }
-        public async Task<string> GenerateToken(UsuarioLogin usuario, string roles, int result)
+        public async Task<TokenRolDTO> GenerateToken(UsuarioLogin usuario, int result,int rolId,string rolName)
         {
 
             byte[] token;
@@ -31,7 +32,7 @@ namespace PracticaJWTcore.Repositorios
             {
                 token = Encoding.ASCII.GetBytes(secretKey);
                 var claims = new ClaimsIdentity();
-                claims.AddClaim(new Claim(ClaimTypes.Role, roles));
+                claims.AddClaim(new Claim(ClaimTypes.Role, rolName));
                 claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.correo));
 
                 var tokenDescriptor = new SecurityTokenDescriptor
@@ -43,21 +44,31 @@ namespace PracticaJWTcore.Repositorios
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var tokenConfig = tokenHandler.CreateToken(tokenDescriptor);
                 var tokenCread = tokenHandler.WriteToken(tokenConfig);
-                return TokenCreado = tokenCread;
+                TokenRolDTO tokenRol = new TokenRolDTO
+                {
+                    Token = tokenCread,
+                    RolId = rolId
+                };
+                return tokenRol;
             }
             else
             {
-                return TokenCreado = "";
-            }
+                 TokenRolDTO tokenVacio= new TokenRolDTO
+                {
+                    Token = "",
+                    RolId = 0
+                };
+                return tokenVacio;
+             }
         }
 
 
 
-        public async Task<string> Login(UsuarioLogin usuario)
+        public async Task<TokenRolDTO> Login(UsuarioLogin usuario)
         {
 
-            var usuarioRoles = await _context.Usuarios.Where(x => x.correo == usuario.correo).Select(x => x.RoleId).FirstOrDefaultAsync();
-
+          string rolName = string.Empty;
+            int roleId = 0;
             int result = 0;
             using (var conecction = new SqlConnection(conection))
             {
@@ -71,10 +82,21 @@ namespace PracticaJWTcore.Repositorios
                     await conecction.OpenAsync();
                     await command.ExecuteNonQueryAsync();
                     result = (int)ouputParameter.Value;
+
+                    if (result > 0)
+                    {
+                       roleId=await _context.Usuarios
+                            .Where(u => u.correo == usuario.correo)
+                            .Select(u => u.RoleId)
+                            .FirstOrDefaultAsync();
+                        rolName = await _context.Roles.Where(r => r.RoleId == roleId)
+                            .Select(r => r.RoleName)
+                            .FirstOrDefaultAsync();
+                    }
                     await conecction.CloseAsync();
                 }
-                var Roles = await _context.Roles.Where(x => x.RoleId == usuarioRoles).Select(x => x.RoleName).FirstOrDefaultAsync();
-                return await GenerateToken(usuario, Roles, result);
+               
+                return await GenerateToken(usuario,result,roleId, rolName);
 
             }
 
@@ -130,6 +152,6 @@ namespace PracticaJWTcore.Repositorios
 
         }
 
- 
+     
     }
 }

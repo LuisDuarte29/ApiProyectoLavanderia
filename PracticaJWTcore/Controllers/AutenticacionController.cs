@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
+using PracticaJWTcore.Dtos;
 using PracticaJWTcore.Models;
 using PracticaJWTcore.Repositorios;
 using System.Data;
@@ -23,9 +24,9 @@ namespace PracticaJWTcore.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] UsuarioLogin loginModel)
         {
-            var response= await _autenticacionRepository.Login(loginModel);
-            return response!=null ? StatusCode(StatusCodes.Status200OK, new { token=response }) : StatusCode(StatusCodes.Status204NoContent, new { token = "" });
-      
+            TokenRolDTO response= await _autenticacionRepository.Login(loginModel);
+            return response!=null ? StatusCode(StatusCodes.Status200OK, new { tokenRol= response }) : StatusCode(StatusCodes.Status204NoContent, new { string.Empty });
+            
         
         }
         [HttpPost("CambioClave")]

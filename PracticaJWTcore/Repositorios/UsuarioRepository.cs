@@ -82,8 +82,9 @@ namespace PracticaJWTcore.Repositorios
                 RoleName = x.RoleName
             }).ToListAsync();
         }
-        public async Task<List<PermisosDTO>> PermisosRoleList(int roleId, int ComponentsId)
-        {
+        public async Task<List<PermisosDTO>> PermisosRoleList(int roleId, string ComponentsString)
+        {   
+            var ComponentsId = await _context.ComponentsForm.Where(c => c.ComponentsName == ComponentsString).Select(c => c.ComponentsId).FirstOrDefaultAsync();
 
             var permisos = await _context.RolesPermisos.Where(rp => rp.RoleId == roleId  && rp.ComponentsId == ComponentsId)
                 .Select(rp => new PermisosDTO
