@@ -14,11 +14,11 @@ namespace PracticaJWTcore.Repositorios
 
         Task<bool> DeleteService(long id);
 
-        Task<List<Service>> GetServiceAll();
+        Task<IEnumerable<Service>> GetServiceAll();
 
-        Task<List<Service>> UpdateServices(Service services);
+        Task<IEnumerable<Service>> UpdateServices(Service services);
 
-        Task<List<Articulos>> GetAllArticulos();
+        Task<IEnumerable<Articulos>> GetAllArticulos();
 
     }
 }

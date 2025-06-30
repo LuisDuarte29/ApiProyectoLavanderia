@@ -16,22 +16,22 @@ namespace PracticaJWTcore.Services
             return await _context.CreateUsuarios(usuarioCreate);
         }
 
-        public async Task<List<RoleModal>> GetAllRoles()
+        public async Task<IEnumerable<RoleModal>> GetAllRoles()
         {
             return await _context.GetAllRoles();
         }
 
-        public Task<List<UsuarioDTO>> GetAllUsuarios()
+        public Task<IEnumerable<UsuarioDTO>> GetAllUsuarios()
         {
             return _context.GetAllUsuarios();
         }
 
-        public async Task<List<PermisosModal>> GetPermisosList()
+        public async Task<IEnumerable<PermisosModal>> GetPermisosList()
         {
             return await _context.GetPermisosList();
         }
 
-        public async Task<List<RolesDTO>> GetRolesList()
+        public async Task<IEnumerable<RolesDTO>> GetRolesList()
         {
             return await _context.GetRolesList();
         }
@@ -41,12 +41,12 @@ namespace PracticaJWTcore.Services
            return await _context.PermisosRoleCreate(rolesPermisos);
         }
 
-        public async Task<List<PermisosDTO>> PermisosRoleList(int roleId,string componentsId)
+        public async Task<IEnumerable<PermisosDTO>> PermisosRoleList(int roleId,string componentsId)
         {
             return await _context.PermisosRoleList(roleId,componentsId);
         }
 
-       public async Task<List<ComponentsForm>> GetComponentsForms()
+       public async Task<IEnumerable<ComponentsForm>> GetComponentsForms()
         {
             return await _context.GetComponentsForms();
         }

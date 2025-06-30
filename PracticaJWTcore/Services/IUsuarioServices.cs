@@ -5,13 +5,13 @@ namespace PracticaJWTcore.Services
 {
     public interface IUsuarioServices
     {
-        Task<List<UsuarioDTO>> GetAllUsuarios();
+        Task<IEnumerable<UsuarioDTO>> GetAllUsuarios();
         Task<bool> CreateUsuarios(CreateUsuariosDTO usuarioCreate);
-        Task<List<RoleModal>> GetAllRoles();
-        Task<List<RolesDTO>> GetRolesList();
-        Task<List<PermisosModal>> GetPermisosList();
-        Task<List<PermisosDTO>> PermisosRoleList(int rolId, string componentsId);
+        Task<IEnumerable<RoleModal>> GetAllRoles();
+        Task<IEnumerable<RolesDTO>> GetRolesList();
+        Task<IEnumerable<PermisosModal>> GetPermisosList();
+        Task<IEnumerable<PermisosDTO>> PermisosRoleList(int rolId, string componentsId);
         Task<bool> PermisosRoleCreate(RolesPermisoDTO rolesPermisos);
-        Task<List<ComponentsForm>> GetComponentsForms();
+        Task<IEnumerable<ComponentsForm>> GetComponentsForms();
     }
 }

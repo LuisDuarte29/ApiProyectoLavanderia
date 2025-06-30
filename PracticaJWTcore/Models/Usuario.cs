@@ -11,6 +11,8 @@ public class Usuarios
     public byte[] clave { get; set; }
         public int RoleId { get; set; }
         public long CustomerID { get; set; }
+        public Customer Customer { get; set; } = new Customer();
+        public Roles Roles { get; set; } = new Roles();
 
         // Relación con UsuariosRoles
         public ICollection<UsuariosRoles> UsuariosRoles { get; set; } = new List<UsuariosRoles>();

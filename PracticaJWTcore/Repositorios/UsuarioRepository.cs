@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using PracticaJWTcore.Dtos;
 using PracticaJWTcore.Models;
 using System.Data;
@@ -22,39 +23,35 @@ namespace PracticaJWTcore.Repositorios
         public async Task<bool> CreateUsuarios(CreateUsuariosDTO usuarioCreate)
         {
             bool result = false;
-            using (var conecction = new SqlConnection(_conection))
+            try
             {
-                using (var command = new SqlCommand("proc_InsertUsuario", conecction))
+                Usuarios usuario = new Usuarios
                 {
-                    command.CommandType = CommandType.StoredProcedure;
+                    IdUsuario = 0,
+                    correo = usuarioCreate.correo,
+                    CustomerID = usuarioCreate.CustomerID,
+                    RoleId = usuarioCreate.RoleId
+                };
 
-                    command.Parameters.AddWithValue("@Correo", usuarioCreate.correo);
-                    command.Parameters.AddWithValue("@CustomerId", usuarioCreate.CustomerID);
-                    command.Parameters.AddWithValue("@RoleId", usuarioCreate.RoleId);
-                    await conecction.OpenAsync();
-                    int filasAfectadas = await command.ExecuteNonQueryAsync();
-                    if (filasAfectadas > 0)
-                    {
-                        result = true;
-                    }
-                    else
-                    {
-                        result = false;
-                        throw new Exception("Error al crear el usuario");
 
-                    }
-                    await _context.SaveChangesAsync();
-                    await conecction.CloseAsync();
-                }
 
-                return result;
+             EntityEntry<Usuarios> response= await  _context.Usuarios.AddAsync(usuario);
+               _context.SaveChangesAsync().Wait();
 
+                result = true;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al crear el usuario: {ex.Message}");
+                result=false;
+            }
+
+            return result;
 
         }
 
 
-        public async Task<List<RoleModal>> GetAllRoles()
+        public async Task<IEnumerable<RoleModal>> GetAllRoles()
         {
             return await _context.Roles.Select(x => new RoleModal
             {
@@ -63,18 +60,24 @@ namespace PracticaJWTcore.Repositorios
             }).ToListAsync();
         }
 
-        public async Task<List<UsuarioDTO>> GetAllUsuarios()
+        public async Task<IEnumerable<UsuarioDTO>> GetAllUsuarios()
         {
-            return await _context.Usuarios.Select(x => new UsuarioDTO
-            {
-                IdUsuario = x.IdUsuario,
-                Correo = x.correo,
-                Customer = _context.Customer.Where(c => c.Id == x.CustomerID).Select(p => p.FirstName).FirstOrDefault(),
-                Role = _context.Roles.Where(rol => rol.RoleId == x.RoleId).Select(c => c.RoleName).FirstOrDefault(),
-            }).ToListAsync();
+        
+
+            return await _context.Usuarios.AsNoTracking().Include(c => c.Customer)
+                .Include(r => r.Roles)
+                .Select(x => new UsuarioDTO
+                {
+                    IdUsuario = x.IdUsuario,
+                    Correo = x.correo,
+                    Customer = x.Customer.FirstName,
+                    Role = x.Roles.RoleName
+                }).ToListAsync();
         }
 
-        public async Task<List<RolesDTO>> GetRolesList()
+
+
+        public async Task<IEnumerable<RolesDTO>> GetRolesList()
         {
             return await _context.Roles.Select(x => new RolesDTO
             {
@@ -82,7 +85,7 @@ namespace PracticaJWTcore.Repositorios
                 RoleName = x.RoleName
             }).ToListAsync();
         }
-        public async Task<List<PermisosDTO>> PermisosRoleList(int roleId, string ComponentsString)
+        public async Task<IEnumerable<PermisosDTO>> PermisosRoleList(int roleId, string ComponentsString)
         {   
             var ComponentsId = await _context.ComponentsForm.Where(c => c.ComponentsName == ComponentsString).Select(c => c.ComponentsId).FirstOrDefaultAsync();
 
@@ -94,7 +97,7 @@ namespace PracticaJWTcore.Repositorios
 
             return permisos;
         }
-        public async Task<List<PermisosModal>> GetPermisosList()
+        public async Task<IEnumerable<PermisosModal>> GetPermisosList()
         {
             return await _context.Permisos.Select(x => new PermisosModal
             {
@@ -105,7 +108,7 @@ namespace PracticaJWTcore.Repositorios
 
         public async Task<bool> PermisosRoleCreate(RolesPermisoDTO r)
         {
-            var rolesPermisos = await _context.RolesPermisos.Where(x => x.RoleId == r.RoleId && x.ComponentsId==r.ComponentsFormId).Select(a => a.PermisoId).ToListAsync();
+            var rolesPermisos = await _context.RolesPermisos.AsNoTracking().Where(x => x.RoleId == r.RoleId && x.ComponentsId==r.ComponentsFormId).Select(a => a.PermisoId).ToListAsync();
 
             int[] permisosIdAdd = r.PermisosId.Except(rolesPermisos).ToArray();
             var permisosIdRemove = rolesPermisos.Except(r.PermisosId);
@@ -121,29 +124,31 @@ namespace PracticaJWTcore.Repositorios
                         ComponentsId = r.ComponentsFormId
 
                     };
-                    _context.RolesPermisos.Add(newRolePermiso);
-                   _context.SaveChanges();
+                     _context.RolesPermisos.Add(newRolePermiso);
+              
                 }
+                await _context.SaveChangesAsync();
 
             }
             if (permisosIdRemove.Any())
             {
                 foreach (var permisoId in permisosIdRemove)
                 {
-                    var rolePermiso = await _context.RolesPermisos.FirstOrDefaultAsync(x => x.RoleId == r.RoleId && x.PermisoId == permisoId);
+                    var rolePermiso = await _context.RolesPermisos.AsNoTracking().FirstOrDefaultAsync(x => x.RoleId == r.RoleId && x.PermisoId == permisoId);
                     if (rolePermiso != null)
                     {
                         _context.RolesPermisos.Remove(rolePermiso);
-                        await _context.SaveChangesAsync();
+               
                     }
                 }
+                await _context.SaveChangesAsync();
             }
 
 
             return true;
 
         }
-       public async Task<List<ComponentsForm>> GetComponentsForms()
+       public async Task<IEnumerable<ComponentsForm>> GetComponentsForms()
         {
             return await _context.ComponentsForm.Select(x => new ComponentsForm
             {

@@ -21,4 +21,5 @@ public partial class Customer
 
 
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    public Usuarios Usuarios { get; set; }
 }

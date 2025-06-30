@@ -7,6 +7,7 @@ using Azure.Core.Pipeline;
 using Microsoft.OpenApi.Models;
 using PracticaJWTcore.Services;
 using PracticaJWTcore.Models;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,21 +80,21 @@ builder.Services.AddScoped<IServicioModal, ServiciosModalServices>();
 builder.Services.AddScoped<IUsuarioServices, UsuarioServices>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine("Cadena de conexión: " + connectionString);
+builder.Logging.AddConsole();
 
 builder.Services.AddDbContext<PracticaJWTcoreContext>(sqlBuilder =>
 {
 
     sqlBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddDbContext<CustomerDataBaseCustomer>(sqlBuilder =>
-{
 
-    sqlBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; // Para mantener los nombres de las propiedades como están en el modelo
 
+});
 
 
 var app = builder.Build();

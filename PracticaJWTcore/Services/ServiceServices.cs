@@ -27,17 +27,17 @@ namespace PracticaJWTcore.Services
         {
             return await _context.DeleteService(id);
         }
-        public async Task<List<Service>> GetServiceAll()
+        public async Task<IEnumerable<Service>> GetServiceAll()
         {
             return await _context.GetServiceAll();
         }
 
-        public async Task<List<Service>> UpdateServices(Service services)
+        public async Task<IEnumerable<Service>> UpdateServices(Service services)
         {
             return await _context.UpdateServices(services);
         }
 
-        public Task<List<Articulos>> GetArticulos()
+        public Task<IEnumerable<Articulos>> GetArticulos()
         {
             return _context.GetAllArticulos();
         }

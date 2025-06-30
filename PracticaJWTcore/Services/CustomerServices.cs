@@ -30,12 +30,12 @@ namespace PracticaJWTcore.Services
             return await _context.DeleteCustomers(id);
         }
 
-        public async Task<List<CustomerDto>> GetCustomerAll()
+        public async Task<IEnumerable<CustomerDto>> GetCustomerAll()
         {
             return await _context.GetCustomerAll();
         }
 
-        public Task<List<CustomerDto>> UpdateCustomer(Customer customer)
+        public Task<IEnumerable<CustomerDto>> UpdateCustomer(Customer customer)
         {
             return _context.UpdateCustomer(customer);
         }

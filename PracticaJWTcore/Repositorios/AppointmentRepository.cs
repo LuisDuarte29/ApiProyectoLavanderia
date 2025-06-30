@@ -28,14 +28,14 @@ namespace PracticaJWTcore.Repositorios
             };
             _context.Appointments.Add(appointment);
             await _context.SaveChangesAsync();
-
+            
           var servicesDetails=appointments.Services.Select(s => new AppointmentService
             {
                 AppointmentId = appointment.AppointmentId,
                 ServiceId = s.ServiceId,
                 Estado = "Pendiente"
             });
-            await _context.AppointmentServices.AddRangeAsync(servicesDetails);
+             _context.AppointmentServices.AddRange(servicesDetails);
             await _context.SaveChangesAsync();
             return appointment.AppointmentId;
 
@@ -72,7 +72,7 @@ namespace PracticaJWTcore.Repositorios
 
         public async Task<IEnumerable<AppoitmentDTO>> GetAppointmentAll()
         {
-            return await _context.Appointments.Select(x => new AppoitmentDTO
+            return await _context.Appointments.AsNoTracking().Select(x => new AppoitmentDTO
             {
                 AppointmentId = x.AppointmentId,
                 AppointmentDate = x.AppointmentDate,

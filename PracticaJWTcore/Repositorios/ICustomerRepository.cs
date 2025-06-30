@@ -18,8 +18,8 @@ namespace PracticaJWTcore.Repositorios
          Task<bool> DeleteCustomers(long id);
 
 
-        Task<List<CustomerDto>> GetCustomerAll();
-        Task<List<CustomerDto>> UpdateCustomer(Customer customer);
+        Task<IEnumerable<CustomerDto>> GetCustomerAll();
+        Task<IEnumerable<CustomerDto>> UpdateCustomer(Customer customer);
 
     }
 }

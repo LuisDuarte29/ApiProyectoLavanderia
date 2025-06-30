@@ -12,9 +12,9 @@ namespace PracticaJWTcore.Services
 
         Task<bool> DeleteService(long id);
 
-        Task<List<Service>> GetServiceAll();
+        Task<IEnumerable<Service>> GetServiceAll();
 
-        Task<List<Service>> UpdateServices(Service services);
-        Task<List<Articulos>> GetArticulos();
+        Task<IEnumerable<Service>> UpdateServices(Service services);
+        Task<IEnumerable<Articulos>> GetArticulos();
     }
 }

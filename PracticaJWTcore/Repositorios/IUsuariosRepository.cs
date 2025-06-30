@@ -5,14 +5,14 @@ namespace PracticaJWTcore.Repositorios
 {
     public interface IUsuariosRepository
     {
-        Task<List<UsuarioDTO>> GetAllUsuarios();
+        Task<IEnumerable<UsuarioDTO>> GetAllUsuarios();
         Task<bool> CreateUsuarios(CreateUsuariosDTO usuarioCreate);
-        Task<List<RoleModal>> GetAllRoles();
-        Task<List<RolesDTO>> GetRolesList();
-        Task<List<PermisosDTO>> PermisosRoleList(int roleId,string ComponentsId);
-        Task<List<PermisosModal>> GetPermisosList();
+        Task<IEnumerable<RoleModal>> GetAllRoles();
+        Task<IEnumerable<RolesDTO>> GetRolesList();
+        Task<IEnumerable<PermisosDTO>> PermisosRoleList(int roleId,string ComponentsId);
+        Task<IEnumerable<PermisosModal>> GetPermisosList();
         Task<bool> PermisosRoleCreate(RolesPermisoDTO rolesPermisos);
-        Task<List<ComponentsForm>> GetComponentsForms();
+        Task<IEnumerable<ComponentsForm>> GetComponentsForms();
 
     }
 }

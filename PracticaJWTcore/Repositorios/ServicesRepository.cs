@@ -39,12 +39,12 @@ namespace PracticaJWTcore.Repositorios
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<List<Service>> GetServiceAll()
+        public async Task<IEnumerable<Service>> GetServiceAll()
         {
-            return await _context.Services.ToListAsync();
+            return await _context.Services.AsNoTracking().ToListAsync();
         }
 
-        public async Task<List<Service>> UpdateServices(Service services)
+        public async Task<IEnumerable<Service>> UpdateServices(Service services)
         {
             Service servicesEntity = await _context.Services.FirstAsync(x => x.ServiceId == services.ServiceId);
             servicesEntity.ServiceName = services.ServiceName;
@@ -54,7 +54,7 @@ namespace PracticaJWTcore.Repositorios
             return await GetServiceAll();
         }
 
-        public async Task<List<Articulos>> GetAllArticulos()
+        public async Task<IEnumerable<Articulos>> GetAllArticulos()
         {
             return await _context.Articulos.ToListAsync();
         }

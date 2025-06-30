@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using PracticaJWTcore.Entities;
 
 namespace PracticaJWTcore.Models;
 
@@ -17,6 +18,8 @@ public partial class PracticaJWTcoreContext : DbContext
 
     public virtual DbSet<Appointment> Appointments { get; set; }
     public virtual DbSet<Customer> Customer { get; set; }
+
+    public DbSet<CustomerEntity> CustomerEntity { get; set; }
 
     public virtual DbSet<Service> Services { get; set; }
 
@@ -125,8 +128,11 @@ public partial class PracticaJWTcoreContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("correo");
             entity.Property(e => e.IdUsuario).ValueGeneratedOnAdd(); // Auto-generate on add
+
+
         });
-  
+ 
+
 
         // 📌 Configuración de RolesPermisos
         modelBuilder.Entity<RolesPermisos>()
