@@ -7,6 +7,8 @@ namespace PracticaJWTcore.Models
         public int RoleId { get; set; }
         public string RoleName { get; set; }
 
+        public Usuarios usuario { get; set; }
+
         // Relación con UsuariosRoles
 
         [JsonIgnore]

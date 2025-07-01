@@ -22,31 +22,29 @@ namespace PracticaJWTcore.Repositorios
         }
         public async Task<bool> CreateUsuarios(CreateUsuariosDTO usuarioCreate)
         {
-            bool result = false;
             try
             {
-                Usuarios usuario = new Usuarios
+                await using var conn = new SqlConnection(_conection);
+                await using var cmd = new SqlCommand("proc_InsertUsuario", conn)
                 {
-                    IdUsuario = 0,
-                    correo = usuarioCreate.correo,
-                    CustomerID = usuarioCreate.CustomerID,
-                    RoleId = usuarioCreate.RoleId
+                    CommandType = CommandType.StoredProcedure
                 };
 
+                // Parámetros
+                cmd.Parameters.Add(new SqlParameter("@Correo", SqlDbType.VarChar, 200) { Value = usuarioCreate.correo });
+                cmd.Parameters.Add(new SqlParameter("@CustomerID", SqlDbType.BigInt) { Value = usuarioCreate.CustomerID });
+                cmd.Parameters.Add(new SqlParameter("@RoleId", SqlDbType.Int) { Value = usuarioCreate.RoleId });
 
+                await conn.OpenAsync();
+                int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
-             EntityEntry<Usuarios> response= await  _context.Usuarios.AddAsync(usuario);
-               _context.SaveChangesAsync().Wait();
-
-                result = true;
+                return rowsAffected > 0;   // true si insertó al menos una fila
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al crear el usuario: {ex.Message}");
-                result=false;
+                Console.WriteLine($"Error al crear el usuario por SP: {ex.Message}");
+                return false;
             }
-
-            return result;
 
         }
 
@@ -64,14 +62,14 @@ namespace PracticaJWTcore.Repositorios
         {
         
 
-            return await _context.Usuarios.AsNoTracking().Include(c => c.Customer)
-                .Include(r => r.Roles)
+            return await _context.Usuarios.AsTracking().Include(c => c.Customer)
+                .Include(r => r.Role)
                 .Select(x => new UsuarioDTO
                 {
                     IdUsuario = x.IdUsuario,
                     Correo = x.correo,
                     Customer = x.Customer.FirstName,
-                    Role = x.Roles.RoleName
+                    Roles = x.Role.RoleName
                 }).ToListAsync();
         }
 
@@ -90,6 +88,20 @@ namespace PracticaJWTcore.Repositorios
             var ComponentsId = await _context.ComponentsForm.Where(c => c.ComponentsName == ComponentsString).Select(c => c.ComponentsId).FirstOrDefaultAsync();
 
             var permisos = await _context.RolesPermisos.Where(rp => rp.RoleId == roleId  && rp.ComponentsId == ComponentsId)
+                .Select(rp => new PermisosDTO
+                {
+                    PermisoId = rp.PermisoId
+                }).ToListAsync();
+
+            return permisos;
+        }
+
+ 
+        public async Task<IEnumerable<PermisosDTO>> PermisosRoleListAsignacion(int roleId, int ComponenteId)
+        {
+         
+
+            var permisos = await _context.RolesPermisos.Where(rp => rp.RoleId == roleId && rp.ComponentsId == ComponenteId)
                 .Select(rp => new PermisosDTO
                 {
                     PermisoId = rp.PermisoId

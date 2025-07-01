@@ -46,7 +46,12 @@ namespace PracticaJWTcore.Services
             return await _context.PermisosRoleList(roleId,componentsId);
         }
 
-       public async Task<IEnumerable<ComponentsForm>> GetComponentsForms()
+        public async Task<IEnumerable<PermisosDTO>> PermisosRoleListAsignacion(int roleId, int componentsFormId)
+        {
+            return await _context.PermisosRoleListAsignacion(roleId, componentsFormId);
+        }
+
+        public async Task<IEnumerable<ComponentsForm>> GetComponentsForms()
         {
             return await _context.GetComponentsForms();
         }

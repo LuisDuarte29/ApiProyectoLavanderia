@@ -10,7 +10,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+
     public class CustomerController : Controller
     {
 
@@ -23,7 +23,7 @@ namespace PracticaJWTcore.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCustomer(long id)
         {
-            CustomerEntity customerEntity = await _customerServices.GetCustomer(id);
+            Customer customerEntity = await _customerServices.GetCustomer(id);
             return Ok(customerEntity.ToDto());
         }
         [HttpGet]
@@ -41,7 +41,7 @@ namespace PracticaJWTcore.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerDto customer)
         {
-            CustomerEntity customerEntity = await _customerServices.CreateCustomer(customer);
+            Customer customerEntity = await _customerServices.CreateCustomer(customer);
             return new CreatedResult($"http://localhost:7184/api/customer/{customerEntity.Id}", null);
         }
         [HttpPut]

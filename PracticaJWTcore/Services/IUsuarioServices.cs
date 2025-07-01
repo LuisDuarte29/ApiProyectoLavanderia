@@ -13,5 +13,7 @@ namespace PracticaJWTcore.Services
         Task<IEnumerable<PermisosDTO>> PermisosRoleList(int rolId, string componentsId);
         Task<bool> PermisosRoleCreate(RolesPermisoDTO rolesPermisos);
         Task<IEnumerable<ComponentsForm>> GetComponentsForms();
+
+        Task<IEnumerable<PermisosDTO>> PermisosRoleListAsignacion(int rolId, int componentsId);
     }
 }

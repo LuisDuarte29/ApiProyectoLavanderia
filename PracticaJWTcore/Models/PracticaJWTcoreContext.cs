@@ -19,7 +19,7 @@ public partial class PracticaJWTcoreContext : DbContext
     public virtual DbSet<Appointment> Appointments { get; set; }
     public virtual DbSet<Customer> Customer { get; set; }
 
-    public DbSet<CustomerEntity> CustomerEntity { get; set; }
+    public DbSet<Customer> CustomerEntity { get; set; }
 
     public virtual DbSet<Service> Services { get; set; }
 
@@ -128,6 +128,11 @@ public partial class PracticaJWTcoreContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("correo");
             entity.Property(e => e.IdUsuario).ValueGeneratedOnAdd(); // Auto-generate on add
+
+            entity.HasOne(u => u.Role)
+              .WithMany()                 // o .WithMany(r => r.Usuarios) si Roles tiene colección
+              .HasForeignKey(u => u.RoleId)
+              .OnDelete(DeleteBehavior.Restrict);
 
 
         });

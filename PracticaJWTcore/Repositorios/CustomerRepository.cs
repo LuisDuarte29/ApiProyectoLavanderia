@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
 using PracticaJWTcore.Entities;
 using PracticaJWTcore.Models;
+using Azure.Identity;
 
 namespace PracticaJWTcore.Repositorios
 {
@@ -15,13 +16,13 @@ namespace PracticaJWTcore.Repositorios
         }
 
 
-        public async Task<CustomerEntity> GetCustomer(long id)
+        public async Task<Customer> GetCustomer(long id)
         {
             return await _context.CustomerEntity.FirstAsync(x => x.Id == id);
         }
-        public async Task<CustomerEntity> CreateCustomer(CreateCustomerDto customersCreate)
+        public async Task<Customer> CreateCustomer(CreateCustomerDto customersCreate)
         {
-            CustomerEntity customerEntity = new CustomerEntity
+            Customer customerEntity = new Customer
             {
                 Id = 0,
                 FirstName = customersCreate.FirstName,
@@ -31,13 +32,13 @@ namespace PracticaJWTcore.Repositorios
 
             };
             //El EntryEntity nos permite hacer un seguimiento de los cambios en la entidad
-            EntityEntry<CustomerEntity> response = await _context.CustomerEntity.AddAsync(customerEntity);
+            EntityEntry<Customer> response = await _context.CustomerEntity.AddAsync(customerEntity);
             await _context.SaveChangesAsync();
             return await GetCustomer(response.Entity.Id);
         }
         public async Task<bool> DeleteCustomers(long id)
         {
-            CustomerEntity customerEntity = await GetCustomer(id);
+            Customer customerEntity = await GetCustomer(id);
             _context.CustomerEntity.Remove(customerEntity);
             await _context.SaveChangesAsync();
             return true;
@@ -50,7 +51,7 @@ namespace PracticaJWTcore.Repositorios
 
         public async Task<IEnumerable<CustomerDto>> UpdateCustomer(Customer customer)
         {
-            CustomerEntity customerEntity = await _context.CustomerEntity.FirstAsync(x=>x.Id==customer.Id);
+            Customer customerEntity = await _context.CustomerEntity.FirstAsync(x=>x.Id==customer.Id);
             customerEntity.FirstName = customer.FirstName;
             customerEntity.Email = customer.Email;
             customerEntity.Phone = customer.Phone;

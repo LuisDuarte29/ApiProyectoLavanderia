@@ -99,7 +99,7 @@ namespace PracticaJWTcore.Repositorios
                 return await GenerateToken(usuario,result,roleId, rolName);
 
             }
-
+            
         }
         public Task<int> CambioClave(CambioClave cambios)
         {
@@ -107,12 +107,12 @@ namespace PracticaJWTcore.Repositorios
             using (var conecction = new SqlConnection(conection))
             {
 
-                using (var command=new SqlCommand("ComparePass", conecction))
+                using (var command=new SqlCommand("proc_ComparePass", conecction))
                 {
                     command.CommandType = CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@correo", cambios.correo);
-                    command.Parameters.AddWithValue("@ContraseñaActual", cambios.claveActual);
-                    SqlParameter ouputParameter = command.Parameters.Add("@resultPass", SqlDbType.Int);
+                    command.Parameters.AddWithValue("@Clave", cambios.claveActual);
+                    SqlParameter ouputParameter = command.Parameters.Add("@Compare", SqlDbType.Int);
                     ouputParameter.Direction = ParameterDirection.Output;
                     conecction.Open();
 
@@ -122,7 +122,7 @@ namespace PracticaJWTcore.Repositorios
                     conecction.Close();
                     if (result != 0)
                     {
-                        using (var commandCambio = new SqlCommand("CambioClave", conecction))
+                        using (var commandCambio = new SqlCommand("proc_CambioClave", conecction))
                         {
                             commandCambio.CommandType = CommandType.StoredProcedure;
                             commandCambio.Parameters.AddWithValue("@correo", cambios.correo);

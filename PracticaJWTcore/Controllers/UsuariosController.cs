@@ -17,11 +17,23 @@ namespace PracticaJWTcore.Controllers
         }
 
         [HttpPost("CreateUsuario")]
-        public async Task<IActionResult> CreateUsuario([FromBody] CreateUsuariosDTO createUsuario)
+        public async Task<IActionResult> CreateUsuario([FromBody] CreateUsuariosDTO dto)
         {
-            bool Usuario = await _usuariosRepository.CreateUsuarios(createUsuario);
-            return Usuario ? Ok() : NotFound();
+            try
+            {
+                bool creado = await _usuariosRepository.CreateUsuarios(dto);
+                if (!creado)
+                    return BadRequest("No se pudo crear el usuario. Verifica datos e intenta de nuevo.");
+
+                return Ok(new { mensaje = "Usuario creado exitosamente" });
+            }
+            catch (Exception ex)
+            {
+                // Opcional: loguea aquí ex.Message
+                return StatusCode(500, $"Error interno: {ex.Message}");
+            }
         }
+
         [HttpGet("GetRoles")]
         public async Task<IActionResult> GetAllRoles()
 
@@ -43,10 +55,20 @@ namespace PracticaJWTcore.Controllers
         }
         [HttpGet("GetListPermisos/{roleId}/{componentsFormSelect}")]
         public async Task<IActionResult> GetListPermisos(int roleId,string componentsFormSelect)
-       {
+       
+        {
             var permisosList = await _usuariosRepository.PermisosRoleList(roleId , componentsFormSelect);
             return new OkObjectResult(permisosList);
         }
+
+        [HttpGet("GetListPermisosAsignacion/{roleId}/{componentsFormSelect}")]
+        public async Task<IActionResult> GetListPermisosAsignacion(int roleId, int componentsFormSelect)
+
+        {
+            var permisosList = await _usuariosRepository.PermisosRoleListAsignacion(roleId, componentsFormSelect);
+            return new OkObjectResult(permisosList);
+        }
+
         [HttpGet("GetPermisosList")]
         public async Task<IActionResult> GetPermisosList()
         {

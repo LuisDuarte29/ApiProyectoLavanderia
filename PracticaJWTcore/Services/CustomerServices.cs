@@ -17,11 +17,11 @@ namespace PracticaJWTcore.Services
         }
 
 
-        public async Task<CustomerEntity> GetCustomer(long id)
+        public async Task<Customer> GetCustomer(long id)
         {
             return await _context.GetCustomer(id);
         }
-        public async Task<CustomerEntity> CreateCustomer(CreateCustomerDto customersCreate)
+        public async Task<Customer> CreateCustomer(CreateCustomerDto customersCreate)
         {
             return await _context.CreateCustomer(customersCreate);
         }
