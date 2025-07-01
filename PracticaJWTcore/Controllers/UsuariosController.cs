@@ -77,7 +77,7 @@ namespace PracticaJWTcore.Controllers
         }
         [HttpPut("CreatePermisosRole")]
         public async Task<IActionResult> CreatePermisosRole([FromBody] RolesPermisoDTO rolesPermisos)
-        {
+           {
             bool result = await _usuariosRepository.PermisosRoleCreate(rolesPermisos);
             return result ? Ok() : NotFound();
         }

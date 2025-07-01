@@ -146,7 +146,7 @@ namespace PracticaJWTcore.Repositorios
             {
                 foreach (var permisoId in permisosIdRemove)
                 {
-                    var rolePermiso = await _context.RolesPermisos.AsNoTracking().FirstOrDefaultAsync(x => x.RoleId == r.RoleId && x.PermisoId == permisoId);
+                    var rolePermiso = await _context.RolesPermisos.AsNoTracking().FirstOrDefaultAsync(x => x.RoleId == r.RoleId && x.PermisoId == permisoId && x.ComponentsId==r.ComponentsFormId);
                     if (rolePermiso != null)
                     {
                         _context.RolesPermisos.Remove(rolePermiso);
