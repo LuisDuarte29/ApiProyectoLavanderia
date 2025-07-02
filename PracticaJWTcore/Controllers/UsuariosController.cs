@@ -2,11 +2,13 @@
 using PracticaJWTcore.Repositorios;
 using PracticaJWTcore.Models;
 using PracticaJWTcore.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
 
     public class UsuariosController : Controller
     {

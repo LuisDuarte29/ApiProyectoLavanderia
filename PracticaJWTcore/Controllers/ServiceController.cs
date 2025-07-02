@@ -8,6 +8,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
 
     public class ServiceController : Controller
     {
