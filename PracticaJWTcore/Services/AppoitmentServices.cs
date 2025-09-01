@@ -21,7 +21,7 @@ namespace PracticaJWTcore.Services
             return _appointmentRepository.DeleteApointment(id);
         }
 
-        public Task<AppoitmentDTO> GetAppointment(long id)
+        public Task<AppoitmentDetailsDTO> GetAppointment(long id)
         {
             return _appointmentRepository.GetAppointment(id);
         }

@@ -49,21 +49,22 @@ namespace PracticaJWTcore.Repositorios
             return true;
         }
 
-        public async Task<AppoitmentDTO?> GetAppointment(long id)
+        public async Task<AppoitmentDetailsDTO?> GetAppointment(long id)
         {
-            return await _context.Appointments.Where(m=>m.AppointmentId==id).Select(x => new AppoitmentDTO
+            return await _context.Appointments.Where(m => m.AppointmentId == id).Select(x => new AppoitmentDetailsDTO
             {
                 AppointmentId = x.AppointmentId,
                 AppointmentDate = x.AppointmentDate,
-                VehicleId=x.VehicleId,
-                EmployeeId=x.EmployeeId,
-                ServiceId=_context.AppointmentServices.Where(e=>e.AppointmentId==x.AppointmentId).Select(e => e.ServiceId).ToList(),
-                EmployeeString = _context.Customer
+                Services = _context.AppointmentServices.Where(a=>a.AppointmentId==id).Select(e => new ServiceDto
+                {
+                    ServiceName = e.Service.ServiceName
+                }).ToList(),
+                Employee = _context.Customer
                .Where(e => e.Id == x.EmployeeId)
                .Select(e => e.FirstName)
                .FirstOrDefault() ?? string.Empty, // Fix for CS8601
                 Comments = x.Comments,
-                VehicleString = _context.Vehicles
+                Vehicle = _context.Vehicles
                .Where(e => e.VehicleId == x.VehicleId)
                .Select(e => e.OwnerName)
                .FirstOrDefault() ?? string.Empty // Fix for CS8601

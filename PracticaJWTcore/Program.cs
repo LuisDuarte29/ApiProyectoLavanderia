@@ -69,6 +69,7 @@ builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAutenticacionRepository, AutenticacionRespository>();
 builder.Services.AddScoped<IUsuariosRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPedidosRepository, PedidosRepository>();
+builder.Services.AddScoped<IEstadisticaRepository, EstadisticaRepository>();
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 builder.Services.AddScoped<IServiceServices, ServiceServices>();
 builder.Services.AddScoped<IAppointmentServices, AppoitmentServices>();
@@ -78,6 +79,7 @@ builder.Services.AddScoped<IVehicleModal, VehicleModalServices>();
 builder.Services.AddScoped<ICustomerModal, CustomerModalServices>();
 builder.Services.AddScoped<IServicioModal, ServiciosModalServices>();
 builder.Services.AddScoped<IUsuarioServices, UsuarioServices>();
+builder.Services.AddScoped<IEstadisticaServices, EstadisiticaServices>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Logging.AddConsole();

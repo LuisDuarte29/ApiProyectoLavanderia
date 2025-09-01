@@ -7,7 +7,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+
 
     public class PedidosController : Controller
     {
