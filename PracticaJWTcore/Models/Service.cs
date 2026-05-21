@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace PracticaJWTcore.Models;
 
+// Entidad de Services; actualmente tambien se usa como contrato en endpoints historicos.
 public partial class Service
 {
     public long ServiceId { get; set; }

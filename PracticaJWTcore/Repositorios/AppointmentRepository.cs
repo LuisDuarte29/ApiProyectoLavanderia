@@ -7,6 +7,7 @@ using PracticaJWTcore.Services;
 
 namespace PracticaJWTcore.Repositorios
 {
+    // Repository de appointments: maneja la cabecera Appointment y la tabla intermedia AppointmentServices.
     public class AppointmentRepository : IAppointmentRepository
     {
         private readonly PracticaJWTcoreContext _context;
@@ -18,6 +19,7 @@ namespace PracticaJWTcore.Repositorios
         }
         public async Task<long> CreateAppointment(CreateAppoitmentDetailsDTO appointments)
         {
+            // Primero guarda la cabecera para obtener AppointmentId y luego registra los servicios asociados.
             Appointment appointment = new Appointment()
             {
              
@@ -106,6 +108,7 @@ namespace PracticaJWTcore.Repositorios
 
             //Verifico los servicios que se agregan y los que se eliminan con el except donde el primero es el que se queda 
             //y el segundo es el que se elimina
+            // La comparacion conserva solo los servicios enviados por el frontend.
             var servicesToAdd = inServicesIdUpdate.Except(existingId).ToList();
             var servicesToRemove=existingId.Except(inServicesIdUpdate).ToList();
 

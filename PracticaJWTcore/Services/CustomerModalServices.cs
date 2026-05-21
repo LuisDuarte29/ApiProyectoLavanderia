@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PracticaJWTcore.Services
 {
+    // Service auxiliar para combos de clientes; devuelve datos livianos para seleccionar en UI.
     public class CustomerModalServices : ICustomerModal
     {
         public readonly PracticaJWTcoreContext _context;

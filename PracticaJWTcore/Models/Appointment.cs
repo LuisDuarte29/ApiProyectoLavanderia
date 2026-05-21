@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace PracticaJWTcore.Models;
 
+// Entidad de Appointment; cabecera de pedido/turno con vehiculo, empleado y servicios.
 public partial class Appointment
 {
     public long AppointmentId { get; set; }

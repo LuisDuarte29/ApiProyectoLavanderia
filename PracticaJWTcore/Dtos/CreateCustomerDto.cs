@@ -1,5 +1,6 @@
 ﻿namespace ApiSwagger.Dtos
 {
+    // Request de alta de cliente; separa el payload de la entidad Customer.
     public class CreateCustomerDto
     {
         public string FirstName { get; set; }

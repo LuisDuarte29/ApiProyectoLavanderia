@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace PracticaJWTcore.Services
 {
+    // Service de servicios: conserva la estructura por capas aunque varias operaciones delegan directo.
     public class ServiceServices : IServiceServices
     { 
         private readonly IServicesRepository _context;

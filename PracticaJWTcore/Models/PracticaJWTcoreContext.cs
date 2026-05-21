@@ -5,6 +5,7 @@ using PracticaJWTcore.Entities;
 
 namespace PracticaJWTcore.Models;
 
+// DbContext principal: centraliza los DbSet y mapeos EF Core contra SQL Server.
 public partial class PracticaJWTcoreContext : DbContext
 {
     public PracticaJWTcoreContext()
@@ -16,6 +17,7 @@ public partial class PracticaJWTcoreContext : DbContext
     {
     }
 
+    // DbSets: cada propiedad representa una tabla o conjunto persistido que usa la API.
     public virtual DbSet<Appointment> Appointments { get; set; }
     public virtual DbSet<Customer> Customer { get; set; }
 
@@ -28,21 +30,29 @@ public partial class PracticaJWTcoreContext : DbContext
     public virtual DbSet<Vehicle> Vehicles { get; set; }
     public virtual DbSet<Roles> Roles { get; set; }
 
-    public virtual DbSet<UsuariosRoles> UsuariosRoles { get; set; }
 
     public virtual DbSet<Permisos> Permisos { get; set; }
     public virtual DbSet<RolesPermisos> RolesPermisos { get; set; }
     public virtual DbSet<AppointmentService> AppointmentServices { get; set; }
 
     public virtual DbSet<Articulos> Articulos { get; set; }
+    public virtual DbSet<Venta> Ventas { get; set; }
+    public virtual DbSet<VentaDetalle> VentaDetalles { get; set; }
+    public virtual DbSet<StockMovimiento> StockMovimientos { get; set; }
+    public virtual DbSet<Categoria> Categorias { get; set; }
+    public virtual DbSet<DocumentoElectronico> DocumentoElectronicos { get; set; }
 
     public virtual DbSet<ComponentsForm> ComponentsForm { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=DefaultConnection");
+    {
+        if (!optionsBuilder.IsConfigured)
+            optionsBuilder.UseSqlServer("Name=DefaultConnection");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // Mapeos criticos: llaves, nombres de columnas, relaciones y tipos SQL se definen aqui.
         modelBuilder.Entity<AppointmentService>(entity =>
         {
             entity.HasKey(e => e.IdAppointmentServices);
@@ -52,41 +62,6 @@ public partial class PracticaJWTcoreContext : DbContext
             entity.Property(e => e.Estado).HasColumnName("Estado");
         });
 
-        OnModelCreatingPartial(modelBuilder);
-        modelBuilder.Entity<UsuariosRoles>()
-      .HasKey(ur => ur.UsuariosRolesId);
-
-        modelBuilder.Entity<UsuariosRoles>()
-            .HasOne(ur => ur.Usuario)
-            .WithMany(u => u.UsuariosRoles)  // 👈 Esto permite hacer Include()
-            .HasForeignKey(ur => ur.UsuarioId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<UsuariosRoles>()
-            .HasOne(ur => ur.Rol)
-            .WithMany(r => r.UsuariosRoles)
-            .HasForeignKey(ur => ur.RolId)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Appointment>(entity =>
-        {
-            entity.Property(e => e.AppointmentId).HasColumnName("AppointmentID");
-            entity.Property(e => e.AppointmentDate).HasColumnType("datetime");
-            entity.Property(e => e.Comments)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
-            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.Appointments)
-                .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK_Appointments_Customers");
-
-            entity.HasOne(d => d.Vehicle).WithMany(p => p.Appointments)
-                .HasForeignKey(d => d.VehicleId)
-                .HasConstraintName("FK_Appointments_Vehicles");
-
-         
-        });
 
         modelBuilder.Entity<Customer>(entity =>
         {
@@ -122,7 +97,10 @@ public partial class PracticaJWTcoreContext : DbContext
 
             entity.ToTable("Usuarios");
 
-            entity.Property(e => e.clave).HasColumnName("clave");
+            entity.Property(e => e.clave)
+                .HasMaxLength(256)
+                .HasColumnType("nvarchar(256)")
+                .HasColumnName("clave");
             entity.Property(e => e.correo)
                 .HasMaxLength(200)
                 .IsUnicode(false)
@@ -167,6 +145,7 @@ public partial class PracticaJWTcoreContext : DbContext
         {
             entity.HasKey(r => r.RoleId);
             entity.ToTable("Roles");
+            entity.Ignore(r => r.usuario);
 
             entity.Property(r => r.RoleName)
                 .HasMaxLength(50)
@@ -196,18 +175,147 @@ public partial class PracticaJWTcoreContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("PermisoNombre");
         });
+        // Articulos mapping -> tablas existentes
+        // Articulos, ventas y stock son tablas sensibles porque sostienen inventario y facturacion.
         modelBuilder.Entity<Articulos>(entity =>
         {
             entity.HasKey(p => p.IdArticulo);
             entity.ToTable("Articulos");
 
+            entity.Property(p => p.IdArticulo).HasColumnName("IdArticulo");
             entity.Property(p => p.NombreArticulo)
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("NombreArticulo");
-            entity.Property(p=>p.Precio)
-            .HasColumnType("decimal(10, 2)")
+            entity.Property(p => p.Precio)
+                .HasColumnType("decimal(18, 0)")
                 .HasColumnName("Precio");
+            entity.Property(p => p.Codigo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("Codigo");
+            entity.Property(p => p.CodigoBarra)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("CodigoBarra");
+            entity.Property(p => p.Descripcion)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("Descripcion");
+            entity.Property(p => p.PrecioCosto)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("PrecioCosto");
+            entity.Property(p => p.PrecioVenta)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("PrecioVenta");
+            entity.Property(p => p.StockActual)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("StockActual");
+            entity.Property(p => p.StockMinimo)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("StockMinimo");
+            entity.Property(p => p.Activo)
+                .HasColumnName("Activo");
+            entity.Property(p => p.IdCategoria)
+                .HasColumnName("IdCategoria");
+
+            entity.HasOne<Categoria>()
+                .WithMany()
+                .HasForeignKey(p => p.IdCategoria)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Venta>(entity =>
+        {
+            entity.HasKey(e => e.IdVenta);
+            entity.ToTable("Ventas");
+
+            entity.Property(e => e.IdVenta).HasColumnName("IdVenta");
+            entity.Property(e => e.FechaVenta).HasColumnType("datetime").HasColumnName("FechaVenta");
+            entity.Property(e => e.IdCliente).HasColumnName("IdCliente");
+            entity.Property(e => e.IdUsuario).HasColumnName("IdUsuario");
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18,2)").HasColumnName("SubTotal");
+            entity.Property(e => e.IvaTotal).HasColumnType("decimal(18,2)").HasColumnName("IvaTotal");
+            entity.Property(e => e.Total).HasColumnType("decimal(18,2)").HasColumnName("Total");
+            entity.Property(e => e.MetodoPago).HasMaxLength(50).IsUnicode(false).HasColumnName("MetodoPago");
+            entity.Property(e => e.Estado).HasMaxLength(30).IsUnicode(false).HasColumnName("Estado");
+        });
+
+        modelBuilder.Entity<VentaDetalle>(entity =>
+        {
+            entity.HasKey(e => e.IdVentaDetalle);
+            entity.ToTable("VentaDetalles");
+
+            entity.Property(e => e.IdVentaDetalle).HasColumnName("IdVentaDetalle");
+            entity.Property(e => e.IdVenta).HasColumnName("IdVenta");
+            entity.Property(e => e.IdArticulo).HasColumnName("IdArticulo");
+            entity.Property(e => e.Cantidad).HasColumnType("decimal(18,2)").HasColumnName("Cantidad");
+            entity.Property(e => e.PrecioUnitario).HasColumnType("decimal(18,2)").HasColumnName("PrecioUnitario");
+            entity.Property(e => e.PorcentajeIva).HasColumnType("decimal(5,2)").HasColumnName("PorcentajeIva");
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18,2)").HasColumnName("SubTotal");
+
+            entity.HasOne<Articulos>()
+                .WithMany()
+                .HasForeignKey(d => d.IdArticulo)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne<Venta>()
+                .WithMany(v => v.VentaDetalles)
+                .HasForeignKey(d => d.IdVenta)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<StockMovimiento>(entity =>
+        {
+            entity.HasKey(e => e.IdStockMovimiento);
+            entity.ToTable("StockMovimientos");
+
+            entity.Property(e => e.IdStockMovimiento).HasColumnName("IdStockMovimiento");
+            entity.Property(e => e.FechaMovimiento).HasColumnType("datetime").HasColumnName("FechaMovimiento");
+            entity.Property(e => e.IdArticulo).HasColumnName("IdArticulo");
+            entity.Property(e => e.TipoMovimiento).HasMaxLength(50).IsUnicode(false).HasColumnName("TipoMovimiento");
+            entity.Property(e => e.Cantidad).HasColumnType("decimal(18,2)").HasColumnName("Cantidad");
+            entity.Property(e => e.StockAnterior).HasColumnType("decimal(18,2)").HasColumnName("StockAnterior");
+            entity.Property(e => e.StockNuevo).HasColumnType("decimal(18,2)").HasColumnName("StockNuevo");
+            entity.Property(e => e.Referencia).HasMaxLength(100).IsUnicode(false).HasColumnName("Referencia");
+            entity.Property(e => e.Observacion).HasMaxLength(255).IsUnicode(false).HasColumnName("Observacion");
+
+            entity.HasOne<Articulos>()
+                .WithMany()
+                .HasForeignKey(d => d.IdArticulo)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Categoria>(entity =>
+        {
+            entity.HasKey(e => e.IdCategoria);
+            entity.ToTable("Categorias");
+            entity.Property(e => e.IdCategoria).HasColumnName("IdCategoria");
+            entity.Property(e => e.NombreCategoria).HasMaxLength(100).IsUnicode(false).HasColumnName("NombreCategoria");
+            entity.Property(e => e.Activo).HasColumnName("Activo");
+        });
+
+        modelBuilder.Entity<DocumentoElectronico>(entity =>
+        {
+            entity.HasKey(e => e.IdDocumentoElectronico);
+            entity.ToTable("DocumentosElectronicos");
+
+            entity.Property(e => e.IdDocumentoElectronico).HasColumnName("IdDocumentoElectronico");
+            entity.Property(e => e.IdVenta).HasColumnName("IdVenta");
+            entity.Property(e => e.TipoDocumento).HasMaxLength(50).IsUnicode(false).HasColumnName("TipoDocumento");
+            entity.Property(e => e.NumeroDocumento).HasMaxLength(50).IsUnicode(false).HasColumnName("NumeroDocumento");
+            entity.Property(e => e.EstadoFiscal).HasMaxLength(50).IsUnicode(false).HasColumnName("EstadoFiscal");
+            entity.Property(e => e.XmlContenido).HasColumnName("XmlContenido");
+            entity.Property(e => e.XmlFirmado).HasColumnName("XmlFirmado");
+            entity.Property(e => e.CodigoRespuesta).HasMaxLength(50).IsUnicode(false).HasColumnName("CodigoRespuesta");
+            entity.Property(e => e.MensajeRespuesta).HasColumnName("MensajeRespuesta");
+            entity.Property(e => e.FechaAprobacion).HasColumnType("datetime").HasColumnName("FechaAprobacion");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime").HasColumnName("FechaCreacion");
+
+            entity.HasOne<Venta>()
+                .WithMany()
+                .HasForeignKey(d => d.IdVenta)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Vehicle>(entity =>

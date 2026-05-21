@@ -4,6 +4,7 @@ using PracticaJWTcore.Repositorios;
 
 namespace PracticaJWTcore.Services
 {
+    // Service intermedio para mantener el flujo Controller -> Service -> Repository en autenticacion.
     public class AutenticacionServices:IAutenticacionServices
     {
         private readonly IAutenticacionRepository _context;

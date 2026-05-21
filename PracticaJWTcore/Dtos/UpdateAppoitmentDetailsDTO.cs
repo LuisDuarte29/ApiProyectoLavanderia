@@ -1,5 +1,6 @@
 ﻿namespace PracticaJWTcore.Dtos
 {
+    // Request para actualizar appointment y sincronizar sus servicios asociados.
     public class UpdateAppoitmentDetailsDTO
     {
         public long AppointmentId { get; set; }

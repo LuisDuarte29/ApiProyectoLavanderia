@@ -1,5 +1,6 @@
 ﻿namespace PracticaJWTcore.Dtos
 {
+    // DTO de listado de pedidos armado desde appointments y servicios.
     public class AppoitmentDetailsDTO
     {
         public long AppointmentId { get; set; }

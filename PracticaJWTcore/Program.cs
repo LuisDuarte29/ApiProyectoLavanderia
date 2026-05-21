@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+Ôªøusing Microsoft.EntityFrameworkCore;
 using PracticaJWTcore.Repositorios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +11,7 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS queda abierto para mantener compatibilidad con los frontends de desarrollo.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirTodo",
@@ -22,6 +23,8 @@ builder.Services.AddCors(options =>
 builder.Configuration.AddJsonFile("appsettings.json");
 var secretkey = builder.Configuration.GetSection("JWT").GetSection("Key").ToString();
 var keyBytes = Encoding.ASCII.GetBytes(secretkey);
+
+// Configura validacion JWT para que los endpoints protegidos puedan aceptar Bearer tokens.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
@@ -36,11 +39,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+// Swagger documenta la API y permite probar endpoints enviando Authorization: Bearer {token}.
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mi API", Version = "v1" });
 
-    // Definir autenticaciÛn con JWT en Swagger
+    // Definir autenticaci√≥n con JWT en Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Ingrese el token JWT en el formato: Bearer {token}",
@@ -50,7 +54,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    // Aplicar autenticaciÛn a todas las solicitudes protegidas
+    // Aplicar autenticaci√≥n a todas las solicitudes protegidas
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -63,17 +67,26 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Repositories: concentran el acceso a EF Core, ADO.NET y stored procedures.
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAutenticacionRepository, AutenticacionRespository>();
 builder.Services.AddScoped<IUsuariosRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPedidosRepository, PedidosRepository>();
+builder.Services.AddScoped<IVentasRepository, VentasRepository>();
+builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<IArticulosRepository, ArticulosRepository>();
+
+// Services: concentran reglas de negocio y coordinan las operaciones de cada modulo.
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 builder.Services.AddScoped<IServiceServices, ServiceServices>();
 builder.Services.AddScoped<IAppointmentServices, AppoitmentServices>();
 builder.Services.AddScoped<IAutenticacionServices, AutenticacionServices>();
 builder.Services.AddScoped<IPedidosServices, PedidosServices>();
+builder.Services.AddScoped<IVentasService, VentasService>();
+builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<IArticulosService, ArticulosService>();
 builder.Services.AddScoped<IVehicleModal, VehicleModalServices>();
 builder.Services.AddScoped<ICustomerModal, CustomerModalServices>();
 builder.Services.AddScoped<IServicioModal, ServiciosModalServices>();
@@ -82,17 +95,19 @@ builder.Services.AddScoped<IUsuarioServices, UsuarioServices>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Logging.AddConsole();
 
+// DbContext principal de EF Core; mantiene el contrato con SQL Server configurado en appsettings.json.
 builder.Services.AddDbContext<PracticaJWTcoreContext>(sqlBuilder =>
 {
 
     sqlBuilder.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// Controllers expone los endpoints HTTP. CamelCase conserva el formato JSON que consume el frontend.
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; // Para mantener los nombres de las propiedades como est·n en el modelo
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; // Para mantener los nombres de las propiedades como est√°n en el modelo
 
 });
 
@@ -107,10 +122,13 @@ if (app.Environment.IsDevelopment())
 
 }
 app.UseRouting();
+
+// Pipeline HTTP: CORS debe ejecutarse antes de autenticacion/autorizacion para aceptar llamadas del frontend.
 app.UseCors("PermitirTodo"); // ?? Debe estar ANTES de UseAuthorization()
 app.UseAuthentication(); // ?? Si usas JWT, agrega esto antes de Authorization
 app.UseAuthorization();
 
+// Mapea los atributos [Route] y [Http...] definidos en los controllers.
 app.MapControllers();
 
 app.Run();

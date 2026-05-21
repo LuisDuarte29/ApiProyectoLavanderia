@@ -4,6 +4,7 @@ using PracticaJWTcore.Repositorios;
 
 namespace PracticaJWTcore.Services
 {
+    // Service de pedidos: expone al controller el listado ya armado por el repository.
     public class PedidosServices : IPedidosServices
     {
         private readonly IPedidosRepository _pedidos;

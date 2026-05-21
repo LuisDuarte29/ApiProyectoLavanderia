@@ -7,6 +7,7 @@ using Azure.Identity;
 
 namespace PracticaJWTcore.Repositorios
 {
+    // Repository de clientes: concentra CRUD de Customer y proyecciones a DTO.
     public class CustomerRepository:ICustomerRepository
     {
         private readonly PracticaJWTcoreContext _context;
@@ -46,7 +47,18 @@ namespace PracticaJWTcore.Repositorios
 
         public async Task<IEnumerable<CustomerDto>> GetCustomerAll()
         {
-            return await _context.CustomerEntity.Select(x => x.ToDto()).ToListAsync();
+            // Lista clientes con DTO para no devolver la entidad con navegaciones.
+            return await _context.CustomerEntity
+                .Select(x => new CustomerDto
+                {
+                    Id = x.Id,
+                    FirstName = x.FirstName,
+                    LastName = null,
+                    Email = x.Email,
+                    Phone = x.Phone,
+                    Address = x.Address
+                })
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<CustomerDto>> UpdateCustomer(Customer customer)

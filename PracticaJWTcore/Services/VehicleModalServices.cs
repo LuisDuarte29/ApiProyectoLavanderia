@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PracticaJWTcore.Services
 {
+    // Service auxiliar para combos de vehiculos; accede directo al DbContext por contrato historico.
     public class VehicleModalServices : IVehicleModal
     {
         private readonly PracticaJWTcoreContext _context;

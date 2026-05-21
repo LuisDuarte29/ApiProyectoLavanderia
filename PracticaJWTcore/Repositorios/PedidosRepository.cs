@@ -4,6 +4,7 @@ using PracticaJWTcore.Models;
 
 namespace PracticaJWTcore.Repositorios
 {
+    // Repository de pedidos: arma una vista de appointments con vehiculo, empleado y servicios.
     public class PedidosRepository : IPedidosRepository
     {
         private readonly PracticaJWTcoreContext _context;

@@ -5,6 +5,7 @@ using PracticaJWTcore.Repositorios;
 namespace PracticaJWTcore.Services
 
 {
+    // Service de appointments: coordina el controller con el repository que maneja cabecera y servicios.
     public class AppoitmentServices : IAppointmentServices
     {
         private readonly IAppointmentRepository _appointmentRepository;

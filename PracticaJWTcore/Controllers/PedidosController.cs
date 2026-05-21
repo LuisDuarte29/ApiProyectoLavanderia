@@ -8,6 +8,7 @@ namespace PracticaJWTcore.Controllers
     [ApiController]
     [Route("api/[controller]")]
 
+    // Controller de pedidos: expone un listado armado como DTO para la pantalla de pedidos.
     public class PedidosController : Controller
     {
         private readonly IPedidosServices _pedidos;
@@ -15,6 +16,7 @@ namespace PracticaJWTcore.Controllers
         {
             _pedidos = pedidos;
         }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetPedidos()
         {

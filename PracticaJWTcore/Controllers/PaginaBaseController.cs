@@ -9,6 +9,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    // Controller de combos/base: entrega listas livianas para cargar selects del frontend.
     public class PaginaBaseController : Controller
     {
         public readonly IVehicleModal _vehicleModal;

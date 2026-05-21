@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace PracticaJWTcore.Models;
 
+// Entidad intermedia entre Appointment y Service; guarda el estado de cada servicio del pedido.
 public partial class AppointmentService
 {
     public long AppointmentId { get; set; }

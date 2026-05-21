@@ -4,6 +4,7 @@ using PracticaJWTcore.Models;
 
 namespace PracticaJWTcore.Repositorios
 {
+    // Repository de servicios: CRUD historico sobre la tabla Services.
     public class ServicesRepository: IServicesRepository
     {
 

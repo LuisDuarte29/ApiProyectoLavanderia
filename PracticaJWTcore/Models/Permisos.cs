@@ -2,6 +2,7 @@
 
 namespace PracticaJWTcore.Models
 {
+    // Entidad de Permisos; se relaciona con roles por componente de pantalla.
     public class Permisos
     {
         [Key]

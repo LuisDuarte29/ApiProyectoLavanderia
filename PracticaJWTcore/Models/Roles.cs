@@ -2,6 +2,7 @@
 
 namespace PracticaJWTcore.Models
 {
+    // Entidad de Roles; participa en JWT y en la asignacion de permisos.
     public class Roles
     {
         public int RoleId { get; set; }
@@ -11,8 +12,6 @@ namespace PracticaJWTcore.Models
 
         // Relación con UsuariosRoles
 
-        [JsonIgnore]
-        public ICollection<UsuariosRoles> UsuariosRoles { get; set; } = new List<UsuariosRoles>();
 
         // Relación con RolesPermisos
         [JsonIgnore]

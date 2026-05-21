@@ -1,5 +1,6 @@
 ﻿namespace PracticaJWTcore.Dtos
 {
+    // Response de appointment con nombres de vehiculo/empleado y servicios asociados.
     public class AppoitmentDTO
     {
       

@@ -8,6 +8,7 @@ using PracticaJWTcore.Repositorios;
 
 namespace PracticaJWTcore.Services
 {
+    // Service de clientes: capa intermedia para mantener controllers desacoplados del repository.
     public class CustomerServices : ICustomerServices
     {
         private readonly ICustomerRepository _context;

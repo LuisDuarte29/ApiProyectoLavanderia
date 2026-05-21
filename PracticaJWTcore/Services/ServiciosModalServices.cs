@@ -4,6 +4,7 @@ using PracticaJWTcore.Repositorios;
 
 namespace PracticaJWTcore.Services
 {
+    // Service auxiliar para combos de servicios; alimenta selects sin pasar por controller de servicios.
     public class ServiciosModalServices : IServicioModal
     {
         public readonly PracticaJWTcoreContext _context;
