@@ -5,6 +5,7 @@ namespace PracticaJWTcore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class TestController : Controller
     {
         [AllowAnonymous] // <- Permite el acceso sin autenticación

@@ -8,6 +8,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
 
     // Controller de servicios: conserva endpoints historicos que aun usan la entidad Service como contrato.
     public class ServiceController : Controller

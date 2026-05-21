@@ -10,6 +10,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
 
     // Controller de clientes: delega el CRUD al service y mantiene los contratos usados por el frontend.
     public class CustomerController : Controller
