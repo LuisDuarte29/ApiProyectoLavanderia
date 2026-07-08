@@ -1,0 +1,23 @@
+﻿# Excluye compilaciones locales.
+# Sin esto: se copiarían archivos innecesarios o incompatibles.
+bin
+
+# Excluye archivos temporales generados por .NET.
+# Sin esto: la imagen sería más pesada y podría contener resultados anteriores.
+obj
+
+# Excluye configuraciones temporales de Visual Studio.
+# Sin esto: Docker enviaría archivos que no necesita.
+.vs
+
+# Excluye el repositorio y su historial.
+# Sin esto: la construcción sería más pesada.
+.git
+
+# Excluye configuraciones personales de Visual Studio.
+# Sin esto: podrían copiarse preferencias locales.
+*.user
+
+# Excluye la configuración local de desarrollo.
+# Sin esto: podría sobrescribir configuraciones proporcionadas por Docker.
+appsettings.Development.json

@@ -18,23 +18,17 @@ public partial class PracticaJWTcoreContext : DbContext
     }
 
     // DbSets: cada propiedad representa una tabla o conjunto persistido que usa la API.
-    public virtual DbSet<Appointment> Appointments { get; set; }
     public virtual DbSet<Customer> Customer { get; set; }
 
     public DbSet<Customer> CustomerEntity { get; set; }
 
-    public virtual DbSet<Service> Services { get; set; }
-
     public virtual DbSet<Usuarios> Usuarios { get; set; }
 
-    public virtual DbSet<Vehicle> Vehicles { get; set; }
     public virtual DbSet<Roles> Roles { get; set; }
 
 
     public virtual DbSet<Permisos> Permisos { get; set; }
     public virtual DbSet<RolesPermisos> RolesPermisos { get; set; }
-    public virtual DbSet<AppointmentService> AppointmentServices { get; set; }
-
     public virtual DbSet<Articulos> Articulos { get; set; }
     public virtual DbSet<Venta> Ventas { get; set; }
     public virtual DbSet<VentaDetalle> VentaDetalles { get; set; }
@@ -53,16 +47,6 @@ public partial class PracticaJWTcoreContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Mapeos criticos: llaves, nombres de columnas, relaciones y tipos SQL se definen aqui.
-        modelBuilder.Entity<AppointmentService>(entity =>
-        {
-            entity.HasKey(e => e.IdAppointmentServices);
-
-            entity.Property(e => e.AppointmentId).HasColumnName("AppointmentID");
-            entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
-            entity.Property(e => e.Estado).HasColumnName("Estado");
-        });
-
-
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.Property(e => e.Address)
@@ -76,18 +60,6 @@ public partial class PracticaJWTcoreContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Phone)
                 .HasMaxLength(200)
-                .IsUnicode(false);
-        });
-
-        modelBuilder.Entity<Service>(entity =>
-        {
-            entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
-            entity.Property(e => e.Description)
-                .HasMaxLength(255)
-                .IsUnicode(false);
-            entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
-            entity.Property(e => e.ServiceName)
-                .HasMaxLength(100)
                 .IsUnicode(false);
         });
 
@@ -239,6 +211,9 @@ public partial class PracticaJWTcoreContext : DbContext
             entity.Property(e => e.Total).HasColumnType("decimal(18,2)").HasColumnName("Total");
             entity.Property(e => e.MetodoPago).HasMaxLength(50).IsUnicode(false).HasColumnName("MetodoPago");
             entity.Property(e => e.Estado).HasMaxLength(30).IsUnicode(false).HasColumnName("Estado");
+            entity.Property(e => e.FechaAnulacion).HasColumnType("datetime").HasColumnName("FechaAnulacion");
+            entity.Property(e => e.MotivoAnulacion).HasMaxLength(255).IsUnicode(false).HasColumnName("MotivoAnulacion");
+            entity.Property(e => e.IdUsuarioAnulacion).HasColumnName("IdUsuarioAnulacion");
         });
 
         modelBuilder.Entity<VentaDetalle>(entity =>
@@ -316,23 +291,6 @@ public partial class PracticaJWTcoreContext : DbContext
                 .WithMany()
                 .HasForeignKey(d => d.IdVenta)
                 .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<Vehicle>(entity =>
-        {
-            entity.Property(e => e.VehicleId).HasColumnName("VehicleID");
-            entity.Property(e => e.LicensePlate)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Make)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Model)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.OwnerName)
-                .HasMaxLength(200)
-                .IsUnicode(false);
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PracticaJWTcore.Authorization;
 using PracticaJWTcore.Dtos;
 using PracticaJWTcore.Services;
 
@@ -7,7 +8,7 @@ namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // Controller de usuarios, roles y permisos: expone endpoints historicos y delega al service.
+
     public class UsuariosController : Controller
     {
         private readonly IUsuarioServices _usuarioServices;
@@ -17,6 +18,7 @@ namespace PracticaJWTcore.Controllers
             _usuarioServices = usuarioServices;
         }
         [Authorize]
+        [Permiso("ListaUsuarios", "Crear")]
         [HttpPost("CreateUsuario")]
         // Crea usuarios mediante el service; el repository guarda la clave hasheada con EF Core.
         public async Task<IActionResult> CreateUsuario([FromBody] CreateUsuariosDTO dto)
@@ -36,6 +38,7 @@ namespace PracticaJWTcore.Controllers
             }
         }
         [Authorize]
+        [Permiso("ListaRoles", "Leer")]
         [HttpGet("GetRoles")]
         public async Task<IActionResult> GetAllRoles()
         {
@@ -43,6 +46,7 @@ namespace PracticaJWTcore.Controllers
             return new OkObjectResult(roles);
         }
         [Authorize]
+        [Permiso("ListaUsuarios", "Leer")]
         [HttpGet("GetUsuarios")]
         public async Task<IActionResult> GetAllUsuarios()
         {
@@ -50,6 +54,7 @@ namespace PracticaJWTcore.Controllers
             return new OkObjectResult(usuarios);
         }
         [Authorize]
+        [Permiso("ListaRoles", "Leer")]
         [HttpGet("GetRoleList")]
         public async Task<IActionResult> GetRoleList()
         {
@@ -57,6 +62,7 @@ namespace PracticaJWTcore.Controllers
             return new OkObjectResult(rolesList);
         }
         [Authorize]
+        [Permiso("ListaRoles", "Crear")]
         [HttpPost("CreateRole")]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleDTO dto)
         {
@@ -66,6 +72,7 @@ namespace PracticaJWTcore.Controllers
                 : BadRequest(result.Message);
         }
         [Authorize]
+        [Permiso("ListaRoles", "Actualizar")]
         [HttpPut("UpdateRole/{id}")]
         public async Task<IActionResult> UpdateRole(int id, [FromBody] UpdateRoleDTO dto)
         {
@@ -78,6 +85,7 @@ namespace PracticaJWTcore.Controllers
                 : BadRequest(result.Message);
         }
         [Authorize]
+        [Permiso("AsignarPermisosRoles", "Leer")]
         [HttpGet("GetListPermisos/{roleId}/{componentsFormSelect}")]
         public async Task<IActionResult> GetListPermisos(int roleId, string componentsFormSelect)
         {
@@ -85,6 +93,7 @@ namespace PracticaJWTcore.Controllers
             return new OkObjectResult(permisosList);
         }
         [Authorize]
+        [Permiso("AsignarPermisosRoles", "Leer")]
         [HttpGet("GetListPermisosAsignacion/{roleId}/{componentsFormSelect}")]
         public async Task<IActionResult> GetListPermisosAsignacion(int roleId, int componentsFormSelect)
         {
@@ -92,6 +101,7 @@ namespace PracticaJWTcore.Controllers
             return new OkObjectResult(permisosList);
         }
         [Authorize]
+        [Permiso("AsignarPermisosRoles", "Leer")]
         [HttpGet("GetPermisosList")]
         public async Task<IActionResult> GetPermisosList()
         {
@@ -99,6 +109,7 @@ namespace PracticaJWTcore.Controllers
             return new OkObjectResult(permisosList);
         }
         [Authorize]
+        [Permiso("AsignarPermisosRoles", "Actualizar")]
         [HttpPut("CreatePermisosRole")]
         // Actualiza permisos por rol/componente manteniendo el payload que ya consume la UI.
         public async Task<IActionResult> CreatePermisosRole([FromBody] RolesPermisoDTO rolesPermisos)
@@ -107,6 +118,7 @@ namespace PracticaJWTcore.Controllers
             return result ? Ok() : NotFound();
         }
         [Authorize]
+        [Permiso("AsignarPermisosRoles", "Leer")]
         [HttpGet("GetComponentsForms")]
         public async Task<IActionResult> GetComponentsForms()
         {
@@ -114,6 +126,7 @@ namespace PracticaJWTcore.Controllers
             return new OkObjectResult(componentsForms);
         }
         [Authorize]
+        [Permiso("AsignarPermisosRoles", "Crear")]
         [HttpPost("CreateComponentsForm")]
         public async Task<IActionResult> CreateComponentsForm([FromBody] CreateComponentFormDTO dto)
         {

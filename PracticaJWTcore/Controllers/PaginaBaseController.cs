@@ -1,47 +1,28 @@
-﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PracticaJWTcore.Models;
+using Microsoft.AspNetCore.Authorization;
+using PracticaJWTcore.Authorization;
 using PracticaJWTcore.Repositorios;
-using PracticaJWTcore.Services;
-
 
 namespace PracticaJWTcore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // Controller de combos/base: entrega listas livianas para cargar selects del frontend.
     public class PaginaBaseController : Controller
     {
-        public readonly IVehicleModal _vehicleModal;
         public readonly ICustomerModal _customerModal;
-        public readonly IServicioModal _servicioModal;
 
-        public PaginaBaseController(IVehicleModal vehicleModal, ICustomerModal customerModal, IServicioModal servicioModal)
+        public PaginaBaseController(ICustomerModal customerModal)
         {
-            _vehicleModal = vehicleModal;
             _customerModal = customerModal;
-            _servicioModal = servicioModal;
         }
 
-        [HttpGet("vehicle")]
-        public async Task<IActionResult> VehicleModalGetAll()
-        {
-            var vehicleModalsList = await _vehicleModal.VehicleModalGetAll();
-            return new OkObjectResult(vehicleModalsList);
-        }
         [HttpGet("customer")]
+        [Authorize]
+        [Permiso("ListaCustomer", "Leer")]
         public async Task<IActionResult> CustomerModalGetAll()
         {
             var customerModalsList = await _customerModal.CustomerModalGetAll();
             return new OkObjectResult(customerModalsList);
         }
-        [HttpGet("servicios")]
-
-        public async Task<IActionResult> ServiciosModalGetAll()
-        {
-            var serviciosModalsList = await _servicioModal.ServiciosModalsGetAll();
-            return new OkObjectResult(serviciosModalsList);
-        }
-
     }
 }

@@ -9,6 +9,7 @@ namespace PracticaJWTcore.Repositorios
         Task<List<StockMovimientoResponseDto>> GetMovimientos();
         Task<StockMovimientoResponseDto?> GetMovimiento(long id);
         Task<StockMovimiento?> GetMovimientoEntity(long id);
+        Task<T> ExecuteInTransaction<T>(Func<Task<T>> operation);
         Task AddMovimiento(StockMovimiento movimiento);
         void RemoveMovimiento(StockMovimiento movimiento);
         Task SaveChanges();

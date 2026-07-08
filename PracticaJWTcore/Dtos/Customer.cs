@@ -1,6 +1,5 @@
 using ApiSwagger.Dtos;
 using PracticaJWTcore.Models;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PracticaJWTcore.Entities
 {
@@ -13,7 +12,6 @@ namespace PracticaJWTcore.Entities
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public string? Address { get; set; }
-        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public Usuarios? Usuarios { get; set; }
 
         public static Customer FromDto(CustomerDto dto)

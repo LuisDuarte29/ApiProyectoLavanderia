@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PracticaJWTcore.Authorization;
 using PracticaJWTcore.Dtos.Stock;
 using PracticaJWTcore.Services;
 
@@ -17,6 +18,7 @@ namespace PracticaJWTcore.Controllers
             _stockService = stockService;
         }
         [Authorize]
+        [Permiso("Stock", "Leer")]
         [HttpGet("movimientos")]
         // GET /api/stock/movimientos lista movimientos sin exponer directamente la entidad EF.
         public async Task<IActionResult> GetMovimientos()
@@ -25,6 +27,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(movimientos);
         }
         [Authorize]
+        [Permiso("Stock", "Leer")]
         [HttpGet("movimientos/{id}")]
         public async Task<IActionResult> GetMovimiento(long id)
         {
@@ -35,6 +38,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(movimiento);
         }
         [Authorize]
+        [Permiso("Stock", "Crear")]
         [HttpPost("movimientos")]
         // POST registra un movimiento manual usando DTO; la regla de stock vive en StockService.
         public async Task<IActionResult> CreateMovimiento([FromBody] StockMovimientoRequestDto movimiento)
@@ -46,6 +50,7 @@ namespace PracticaJWTcore.Controllers
             return Created($"api/stock/movimientos/{result.Value!.IdStockMovimiento}", result.Value);
         }
         [Authorize]
+        [Permiso("Stock", "Actualizar")]
         [HttpPut("movimientos/{id}")]
         // PUT valida la coherencia del id en el service y conserva el contrato de la ruta.
         public async Task<IActionResult> UpdateMovimiento(long id, [FromBody] StockMovimientoRequestDto movimiento)
@@ -62,6 +67,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(result.Value);
         }
         [Authorize]
+        [Permiso("Stock", "Eliminar")]
         [HttpDelete("movimientos/{id}")]
         public async Task<IActionResult> DeleteMovimiento(long id)
         {

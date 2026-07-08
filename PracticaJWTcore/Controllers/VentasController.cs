@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PracticaJWTcore.Authorization;
 using PracticaJWTcore.Dtos.Ventas;
 using PracticaJWTcore.Services;
 
@@ -17,6 +18,7 @@ namespace PracticaJWTcore.Controllers
             _ventasService = ventasService;
         }
         [Authorize]
+        [Permiso("NuevaVenta", "Crear")]
         [HttpPost]
         // POST /api/Ventas crea una venta usando el contrato CreateVentaDto.
         public async Task<IActionResult> CreateVenta([FromBody] CreateVentaDto dto)
@@ -28,6 +30,7 @@ namespace PracticaJWTcore.Controllers
             return Created($"api/ventas/{result.Value!.IdVenta}", result.Value);
         }
         [Authorize]
+        [Permiso("HistorialVentas", "Leer")]
         [HttpGet]
         // GET /api/Ventas devuelve ventas proyectadas por el service/repository.
         public async Task<IActionResult> GetVentas()
@@ -36,6 +39,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(ventas);
         }
         [Authorize]
+        [Permiso("DetalleVenta", "Leer")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetVenta(long id)
         {
@@ -46,6 +50,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(venta);
         }
         [Authorize]
+        [Permiso("HistorialVentas", "Actualizar")]
         [HttpPut("{id}")]
         // PUT mantiene la ruta historica y traduce errores de negocio a status HTTP.
         public async Task<IActionResult> UpdateVenta(long id, [FromBody] UpdateVentaDto dto)
@@ -62,6 +67,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(result.Value);
         }
         [Authorize]
+        [Permiso("HistorialVentas", "Eliminar")]
         [HttpDelete("{id}")]
         // DELETE delega la anulacion al service para restaurar stock y registrar trazabilidad.
         public async Task<IActionResult> DeleteVenta(long id)

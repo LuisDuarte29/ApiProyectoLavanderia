@@ -9,13 +9,14 @@ namespace PracticaJWTcore.Repositorios
     public interface ICustomerRepository
     {
 
-        Task<Customer> GetCustomer(long id);
+        Task<Customer?> GetCustomer(long id);
 
 
        Task<Customer> CreateCustomer(CreateCustomerDto customersCreate);
 
 
          Task<bool> DeleteCustomers(long id);
+        Task<bool> CustomerHasVentasOrUsuarios(long id);
 
 
         Task<IEnumerable<CustomerDto>> GetCustomerAll();

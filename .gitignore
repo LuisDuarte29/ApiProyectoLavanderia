@@ -361,3 +361,25 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local secrets and environment-specific settings
+.env
+.env.*
+!.env.example
+*.local.env
+*.secret.json
+*.secrets.json
+**/secrets.json
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+**/appsettings.Development.json
+**/appsettings.*.Development.json
+
+# AI-generated notes and temporary documentation
+docs/generated/
+docs/ai-generated/
+docs/ia-generada/
+docs/*ai-generated*.md
+docs/*generated-by-ai*.md
+docs/*generado-ia*.md
+docs/*generada-ia*.md

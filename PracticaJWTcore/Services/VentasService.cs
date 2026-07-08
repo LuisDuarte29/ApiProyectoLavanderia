@@ -8,6 +8,7 @@ namespace PracticaJWTcore.Services
     public class VentasService : IVentasService
     {
         private const decimal PorcentajeIvaDefault = 10.0m;
+        private const string EstadoAnulada = "ANULADA";
         private readonly IVentasRepository _repository;
 
         public VentasService(IVentasRepository repository)
@@ -155,6 +156,9 @@ namespace PracticaJWTcore.Services
             if (venta == null)
                 return ServiceResult<object>.Fail("Venta no encontrada", "VENTA_NOT_FOUND");
 
+            if (venta.Estado == EstadoAnulada)
+                return ServiceResult<object>.Fail("La venta ya esta anulada", "VENTA_ALREADY_CANCELLED");
+
             return await _repository.ExecuteInTransaction(async () =>
             {
                 // Al eliminar una venta se restaura el stock de sus detalles y se registra el ajuste.
@@ -179,13 +183,13 @@ namespace PracticaJWTcore.Services
                         StockAnterior = stockAnterior,
                         StockNuevo = articulo.StockActual,
                         Referencia = $"AnulacionVenta:{venta.IdVenta}",
-                        Observacion = "Stock restaurado por eliminacion de venta"
+                        Observacion = "Stock restaurado por anulacion de venta"
                     });
                 }
 
-                var movimientosVenta = await _repository.GetMovimientosByReferencia($"Venta:{venta.IdVenta}");
-                _repository.RemoveStockMovimientos(movimientosVenta);
-                _repository.RemoveVenta(venta);
+                venta.Estado = EstadoAnulada;
+                venta.FechaAnulacion = DateTime.UtcNow;
+                venta.MotivoAnulacion = "Anulacion desde API";
 
                 await _repository.SaveChanges();
                 return ServiceResult<object>.Ok(new object());

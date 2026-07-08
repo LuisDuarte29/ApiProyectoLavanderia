@@ -16,8 +16,12 @@ namespace PracticaJWTcore.Services
         public string? Message { get; }
         public string? Code { get; }
 
-        public static ServiceResult<T> Ok(T value) => new(true, value, null, null);
+        //Rearmo el ServiceResult con Ok porque en este caso solo necesito rellenar un parametro 
+        public static ServiceResult<T> Ok(T value)
+        {
+            return new ServiceResult<T>(true, value, null, null);
+        }
 
-        public static ServiceResult<T> Fail(string message, string code) => new(false, default, message, code);
+        public static ServiceResult<T> Fail(string message, string code) => new ServiceResult<T>(false, default, message, code);
     }
 }

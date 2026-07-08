@@ -15,13 +15,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("PermitirTodo",
-        policy => policy.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+        policy =>
+        {
+            var origins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+            if (origins.Length > 0)
+            {
+                policy.WithOrigins(origins)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }
+            else
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }
+        });
 });
 
-builder.Configuration.AddJsonFile("appsettings.json");
-var secretkey = builder.Configuration.GetSection("JWT").GetSection("Key").ToString();
+
+var secretkey = builder.Configuration["JWT:Key"]
+    ?? throw new InvalidOperationException("Falta configurar JWT:Key.");
+var issuer = builder.Configuration["JWT:Issuer"]
+    ?? throw new InvalidOperationException("Falta configurar JWT:Issuer.");
+var audience = builder.Configuration["JWT:Audience"]
+    ?? throw new InvalidOperationException("Falta configurar JWT:Audience.");
 var keyBytes = Encoding.ASCII.GetBytes(secretkey);
 
 // Configura validacion JWT para que los endpoints protegidos puedan aceptar Bearer tokens.
@@ -34,8 +52,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
         //El IssuerSigningKey se usa para validar la firma del token
         IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
-        ValidateIssuer = false,
-        ValidateAudience = false
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
+        ValidateAudience = true,
+        ValidAudience = audience
     };
 });
 
@@ -44,7 +64,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mi API", Version = "v1" });
 
-    // Definir autenticación con JWT en Swagger
+    // Definir autenticaci�n con JWT en Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Ingrese el token JWT en el formato: Bearer {token}",
@@ -54,7 +74,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer"
     });
 
-    // Aplicar autenticación a todas las solicitudes protegidas
+    // Aplicar autenticaci�n a todas las solicitudes protegidas
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -69,27 +89,19 @@ builder.Services.AddSwaggerGen(c =>
 
 // Repositories: concentran el acceso a EF Core, ADO.NET y stored procedures.
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
-builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAutenticacionRepository, AutenticacionRespository>();
 builder.Services.AddScoped<IUsuariosRepository, UsuarioRepository>();
-builder.Services.AddScoped<IPedidosRepository, PedidosRepository>();
 builder.Services.AddScoped<IVentasRepository, VentasRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<IArticulosRepository, ArticulosRepository>();
-
-// Services: concentran reglas de negocio y coordinan las operaciones de cada modulo.
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
-builder.Services.AddScoped<IServiceServices, ServiceServices>();
-builder.Services.AddScoped<IAppointmentServices, AppoitmentServices>();
 builder.Services.AddScoped<IAutenticacionServices, AutenticacionServices>();
-builder.Services.AddScoped<IPedidosServices, PedidosServices>();
 builder.Services.AddScoped<IVentasService, VentasService>();
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<IArticulosService, ArticulosService>();
-builder.Services.AddScoped<IVehicleModal, VehicleModalServices>();
 builder.Services.AddScoped<ICustomerModal, CustomerModalServices>();
-builder.Services.AddScoped<IServicioModal, ServiciosModalServices>();
 builder.Services.AddScoped<IUsuarioServices, UsuarioServices>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -107,7 +119,7 @@ builder.Services.AddEndpointsApiExplorer();
 // Controllers expone los endpoints HTTP. CamelCase conserva el formato JSON que consume el frontend.
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; // Para mantener los nombres de las propiedades como están en el modelo
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; // Para mantener los nombres de las propiedades como est�n en el modelo
 
 });
 

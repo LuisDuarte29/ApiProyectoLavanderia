@@ -15,6 +15,9 @@ namespace PracticaJWTcore.Models
         public decimal Total { get; set; }
         public string? MetodoPago { get; set; }
         public string Estado { get; set; } = "CONFIRMADA";
+        public DateTime? FechaAnulacion { get; set; }
+        public string? MotivoAnulacion { get; set; }
+        public int? IdUsuarioAnulacion { get; set; }
 
         public virtual List<VentaDetalle> VentaDetalles { get; set; } = new List<VentaDetalle>();
     }

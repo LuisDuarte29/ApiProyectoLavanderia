@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PracticaJWTcore.Authorization;
 using PracticaJWTcore.Dtos.Articulos;
 using PracticaJWTcore.Services;
 
@@ -18,6 +19,7 @@ namespace PracticaJWTcore.Controllers
         }
 
         [Authorize]
+        [Permiso("ListaProductos", "Leer")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -25,6 +27,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(articulos);
         }
         [Authorize]
+        [Permiso("ListaProductos", "Leer")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -35,6 +38,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(articulo);
         }
         [Authorize]
+        [Permiso("ListaProductos", "Crear")]
         [HttpPost]
         // POST /api/Articulos delega validaciones de nombre, precio, stock y categoria al service.
         public async Task<IActionResult> Create([FromBody] ArticuloRequestDto articulo)
@@ -46,6 +50,7 @@ namespace PracticaJWTcore.Controllers
             return Created($"api/articulos/{result.Value!.IdArticulo}", result.Value);
         }
         [Authorize]
+        [Permiso("ListaProductos", "Actualizar")]
         [HttpPut("{id}")]
         // PUT mantiene la ruta publica y deja la validacion de id/categoria en la capa de negocio.
         public async Task<IActionResult> Update(int id, [FromBody] ArticuloRequestDto articulo)
@@ -62,6 +67,7 @@ namespace PracticaJWTcore.Controllers
             return Ok(result.Value);
         }
         [Authorize]
+        [Permiso("ListaProductos", "Eliminar")]
         [HttpDelete("{id}")]
         // DELETE se apoya en el service para bloquear eliminaciones con ventas o movimientos asociados.
         public async Task<IActionResult> Delete(int id)

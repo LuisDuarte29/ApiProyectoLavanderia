@@ -71,6 +71,22 @@ namespace PracticaJWTcore.Repositorios
             return _context.StockMovimientos.FirstOrDefaultAsync(m => m.IdStockMovimiento == id);
         }
 
+        public async Task<T> ExecuteInTransaction<T>(Func<Task<T>> operation)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var result = await operation();
+                await transaction.CommitAsync();
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
         public async Task AddMovimiento(StockMovimiento movimiento)
         {
             await _context.StockMovimientos.AddAsync(movimiento);

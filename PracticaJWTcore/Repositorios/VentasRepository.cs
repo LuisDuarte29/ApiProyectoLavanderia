@@ -110,6 +110,8 @@ namespace PracticaJWTcore.Repositorios
                     Total = v.Total,
                     MetodoPago = v.MetodoPago,
                     Estado = v.Estado,
+                    FechaAnulacion = v.FechaAnulacion,
+                    MotivoAnulacion = v.MotivoAnulacion,
                     VentaDetalles = v.VentaDetalles.Select(d => new VentaDetalleResponseDto
                     {
                         IdVentaDetalle = d.IdVentaDetalle,

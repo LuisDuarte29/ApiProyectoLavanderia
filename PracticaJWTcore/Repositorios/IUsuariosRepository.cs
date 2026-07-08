@@ -11,6 +11,7 @@ namespace PracticaJWTcore.Repositorios
         Task<RolesDTO?> UpdateRole(int roleId, UpdateRoleDTO dto);
         Task<bool> RoleExists(int roleId);
         Task<bool> RoleNameExists(string roleName, int? excludeRoleId = null);
+        Task<bool> UsuarioCorreoExists(string correo, int? excludeUsuarioId = null);
         Task<IEnumerable<RoleModal>> GetAllRoles();
         Task<IEnumerable<RolesDTO>> GetRolesList();
         Task<IEnumerable<PermisosDTO>> PermisosRoleList(int roleId,string ComponentsId);

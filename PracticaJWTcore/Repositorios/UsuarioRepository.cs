@@ -23,14 +23,14 @@ namespace PracticaJWTcore.Repositorios
             {
                 var usuario = new Usuarios
                 {
-                    correo = usuarioCreate.correo,
+                    correo = usuarioCreate.correo.Trim(),
                     CustomerID = usuarioCreate.CustomerID,
                     RoleId = usuarioCreate.RoleId,
                     Customer = null,
                     Role = null
                 };
 
-                var claveInicial = string.IsNullOrWhiteSpace(usuarioCreate.clave) ? "123" : usuarioCreate.clave;
+                var claveInicial = usuarioCreate.clave!.Trim();
                 // El hash queda en SQL Server como nvarchar(256); la clave original no se persiste.
                 usuario.clave = _passwordHasher.HashPassword(usuario, claveInicial);
 
@@ -90,6 +90,13 @@ namespace PracticaJWTcore.Repositorios
             var normalizedName = roleName.Trim();
             return await _context.Roles.AnyAsync(r =>
                 r.RoleName == normalizedName && (!excludeRoleId.HasValue || r.RoleId != excludeRoleId.Value));
+        }
+
+        public Task<bool> UsuarioCorreoExists(string correo, int? excludeUsuarioId = null)
+        {
+            var normalizedCorreo = correo.Trim();
+            return _context.Usuarios.AnyAsync(u =>
+                u.correo == normalizedCorreo && (!excludeUsuarioId.HasValue || u.IdUsuario != excludeUsuarioId.Value));
         }
 
 

@@ -20,7 +20,13 @@ namespace PracticaJWTcore.Services
             if (string.IsNullOrWhiteSpace(usuarioCreate.correo))
                 return false;
 
+            if (string.IsNullOrWhiteSpace(usuarioCreate.clave))
+                return false;
+
             if (!await _context.RoleExists(usuarioCreate.RoleId))
+                return false;
+
+            if (await _context.UsuarioCorreoExists(usuarioCreate.correo))
                 return false;
 
             return await _context.CreateUsuarios(usuarioCreate);

@@ -19,10 +19,17 @@ namespace PracticaJWTcore.Repositorios
         // Implementa hashing seguro (PBKDF2) y comparación resistente a tiempo.
         private readonly PasswordHasher<Usuarios> _passwordHasher = new();
         private readonly string secretKey;
+        private readonly string issuer;
+        private readonly string audience;
         public AutenticacionRespository(PracticaJWTcoreContext context, IConfiguration configuration)
         {
             _context = context;
-            this.secretKey = configuration.GetSection("JWT").GetSection("Key").ToString();
+            this.secretKey = configuration["JWT:Key"]
+                ?? throw new InvalidOperationException("Falta configurar JWT:Key.");
+            this.issuer = configuration["JWT:Issuer"]
+                ?? throw new InvalidOperationException("Falta configurar JWT:Issuer.");
+            this.audience = configuration["JWT:Audience"]
+                ?? throw new InvalidOperationException("Falta configurar JWT:Audience.");
         }
 
         private sealed class UsuarioPasswordInfo
@@ -96,11 +103,14 @@ WHERE correo = @correo";
                 var claims = new ClaimsIdentity();
                 claims.AddClaim(new Claim(ClaimTypes.Role, rolName));
                 claims.AddClaim(new Claim(ClaimTypes.NameIdentifier, usuario.correo));
+                claims.AddClaim(new Claim("roleId", rolId.ToString()));
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = claims,
                     Expires = DateTime.UtcNow.AddHours(1),
+                    Issuer = issuer,
+                    Audience = audience,
                     // SigningCredentials + SymmetricSecurityKey: configura la clave y algoritmo para firmar el JWT
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(token), SecurityAlgorithms.HmacSha256Signature)
                 };

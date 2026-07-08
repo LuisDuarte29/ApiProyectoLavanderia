@@ -18,7 +18,7 @@ namespace PracticaJWTcore.Services
         }
 
 
-        public async Task<Customer> GetCustomer(long id)
+        public async Task<Customer?> GetCustomer(long id)
         {
             return await _context.GetCustomer(id);
         }
@@ -26,9 +26,17 @@ namespace PracticaJWTcore.Services
         {
             return await _context.CreateCustomer(customersCreate);
         }
-        public async Task<bool> DeleteCustomers(long id)
+        public async Task<ServiceResult<object>> DeleteCustomers(long id)
         {
-            return await _context.DeleteCustomers(id);
+            var customer = await _context.GetCustomer(id);
+            if (customer == null)
+                return ServiceResult<object>.Fail("Cliente no encontrado", "CUSTOMER_NOT_FOUND");
+
+            if (await _context.CustomerHasVentasOrUsuarios(id))
+                return ServiceResult<object>.Fail("No se puede eliminar el cliente porque tiene ventas o usuarios asociados", "CUSTOMER_HAS_DEPENDENCIES");
+
+            await _context.DeleteCustomers(id);
+            return ServiceResult<object>.Ok(new object());
         }
 
         public async Task<IEnumerable<CustomerDto>> GetCustomerAll()
