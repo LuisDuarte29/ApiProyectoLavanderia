@@ -90,7 +90,7 @@ namespace PracticaJWTcore.Controllers
 
             if (!string.IsNullOrWhiteSpace(email) && !email.Contains('@'))
             {
-                error = "Email invalido debe de colocar uno correcto";
+                error = "Email invalido proporcionado por mi del resultado entre ramaprueba y master";
                 return false;
             }
 
