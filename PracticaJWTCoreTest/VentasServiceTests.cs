@@ -91,13 +91,15 @@ public class VentasServiceTests
         Assert.False(repository.RemoveMovimientosCalled);
         Assert.Contains(repository.StockMovimientos, m => m.Referencia == "AnulacionVenta:5");
     }
+
+
     [Fact]
     public async Task CreateVenta_con_stock_suficiente_descuenta_stock_registra_movimiento_y_calcula_totales()
     {
-   
+
         var repository = new FakeVentasRepository()
         {
-            Articulos =[
+            Articulos = [
                 new Articulos() {
                 IdArticulo = 10,
                 NombreArticulo = "Jabon",
@@ -128,8 +130,8 @@ public class VentasServiceTests
         Assert.True(realizarVenta.Success);
         Assert.NotNull(repository);
         Assert.Equal(3, repository.Articulos[0].StockActual);
-     }
-        
+    }
+
 
     private sealed class FakeVentasRepository : IVentasRepository
     {
@@ -162,10 +164,10 @@ public class VentasServiceTests
             return Task.CompletedTask;
         }
 
-        public Task AddVentaDetalle(VentaDetalle detalle) 
+        public Task AddVentaDetalle(VentaDetalle detalle)
         {
             ventaDetallesList.Add(detalle);
-                return Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         public Task AddStockMovimiento(StockMovimiento movimiento)

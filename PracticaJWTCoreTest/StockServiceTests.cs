@@ -124,6 +124,8 @@ public class StockServiceTests
 
         public Task<List<StockMovimientoResponseDto>> GetMovimientos()
         {
+            //Tener en cuenta que el FromResult seria como el return await que regresa una respuesta, en este caso solo necesito devolver
+            //Una lista de StockerMovimientoResponseDTO 
             return Task.FromResult(new List<StockMovimientoResponseDto>());
         }
 
