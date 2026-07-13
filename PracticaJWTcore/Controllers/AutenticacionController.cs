@@ -36,7 +36,7 @@ namespace PracticaJWTcore.Controllers
 
             return response > 0
                 ? Ok()
-                : base.StatusCode(StatusCodes.Status400BadRequest, new { message = "Error al cambiar la clave" });
+                : base.StatusCode(StatusCodes.Status400BadRequest, new { message = "Error debe de proporcionar una clave" });
         }
     }
 }

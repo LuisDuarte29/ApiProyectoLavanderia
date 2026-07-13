@@ -84,13 +84,13 @@ namespace PracticaJWTcore.Controllers
         {
             if (string.IsNullOrWhiteSpace(nombre))
             {
-                error = "FirstName es requerido";
+                error = "FirstName es requerido, debe proporcionar un nombre válido";
                 return false;
             }
 
             if (!string.IsNullOrWhiteSpace(email) && !email.Contains('@'))
             {
-                error = "Email invalido";
+                error = "Email invalido debe de colocar uno correcto";
                 return false;
             }
 
