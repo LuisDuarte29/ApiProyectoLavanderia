@@ -12,7 +12,7 @@ namespace PracticaJWTcore.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok("Conexión exitosa desde API");
+            return Ok("Conexión exitosa desde el primer cambio de RamaPublicacion2026");
         }
     }
 }
