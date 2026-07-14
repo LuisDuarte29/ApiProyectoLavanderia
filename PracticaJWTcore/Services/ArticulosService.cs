@@ -41,7 +41,7 @@ namespace PracticaJWTcore.Services
         public async Task<ServiceResult<ArticuloResponseDto>> Update(int id, ArticuloRequestDto articulo)
         {
             if (articulo == null)
-                return ServiceResult<ArticuloResponseDto>.Fail("Articulo requerido desde la RamaPublicacion2026", "ARTICLE_REQUIRED");
+                return ServiceResult<ArticuloResponseDto>.Fail("Articulo requerido Resultado", "ARTICLE_REQUIRED");
 
             if (id != articulo.IdArticulo)
                 return ServiceResult<ArticuloResponseDto>.Fail("El id de la ruta no coincide con el id del articulo", "ID_MISMATCH");
